@@ -1,8 +1,9 @@
 import { MetaProvider } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { ErrorBoundary, Suspense } from "solid-js";
 import "./app.css";
+import { ErrorFallback } from "./modules/shared/error-fallback";
 import { Head } from "./modules/shared/head";
 import { I18nContextProvider } from "./modules/shared/i18n";
 
@@ -13,7 +14,9 @@ export default function App() {
         <I18nContextProvider>
           <MetaProvider>
             <Head />
-            <Suspense>{props.children}</Suspense>
+            <ErrorBoundary fallback={ErrorFallback}>
+              <Suspense>{props.children}</Suspense>
+            </ErrorBoundary>
           </MetaProvider>
         </I18nContextProvider>
       )}
