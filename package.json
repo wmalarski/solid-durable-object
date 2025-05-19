@@ -4,6 +4,7 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.1.4",
+    "pixi.js": "8.9.2",
     "solid-js": "^1.9.7",
     "tailwind-variants": "^1.0.0",
     "typescript": "^5.8.3",
