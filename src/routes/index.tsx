@@ -1,17 +1,20 @@
-import { Button } from "~/ui/button/button";
+import { lazy, Show } from "solid-js";
+import { createIsMounted } from "~/utils/create-is-mounted";
+
+const GameBoard = lazy(() =>
+  import("~/modules/board/components/game-board").then((module) => ({
+    default: module.GameBoard,
+  })),
+);
 
 export default function Home() {
+  const isMounted = createIsMounted();
+
   return (
     <main>
-      <h1>Hello world!</h1>
-      <p>
-        Visit{" "}
-        <a href="https://start.solidjs.com" rel="noopener" target="_blank">
-          start.solidjs.com
-        </a>{" "}
-        to learn how to build SolidStart apps.
-      </p>
-      <Button>Hello</Button>
+      <Show when={isMounted()}>
+        <GameBoard />
+      </Show>
     </main>
   );
 }

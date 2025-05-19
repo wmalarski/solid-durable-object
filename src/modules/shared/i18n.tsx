@@ -10,6 +10,9 @@ import {
 } from "solid-js";
 
 const enDict = {
+  board: {
+    loading: "loading",
+  },
   error: {
     description: "Something went wrong: {{message}}",
     home: "Home",
