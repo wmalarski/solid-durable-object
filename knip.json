@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/app.tsx",
+    "src/entry-client.tsx",
+    "src/entry-server.tsx",
+    "src/routes/**/*.tsx"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "postcss": true,
+  "project": ["src/**/*.{ts,tsx}"],
+  "tailwind": true,
+  "vite": true
+}
