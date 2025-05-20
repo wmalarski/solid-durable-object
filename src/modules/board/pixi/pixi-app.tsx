@@ -60,18 +60,17 @@ export const PixiAppProvider: Component<PixiAppProviderProps> = (props) => {
 
   onMount(() => {
     window.addEventListener("resize", onResize);
-  });
-
-  onCleanup(() => {
-    window.removeEventListener("resize", onResize);
+    onCleanup(() => {
+      window.removeEventListener("resize", onResize);
+    });
   });
 
   onMount(() => {
     app.stage.addChild(container);
-  });
 
-  onCleanup(() => {
-    app.stage.removeChild(container);
+    onCleanup(() => {
+      app.stage.removeChild(container);
+    });
   });
 
   return (
