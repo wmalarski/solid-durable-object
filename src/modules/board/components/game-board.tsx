@@ -1,6 +1,6 @@
 import { type Component, createSignal, Show } from "solid-js";
-import { PixiStage } from "~/modules/pixi/pixi-stage";
 import { GameStateProvider } from "../contexts/game-state";
+import { PixiStage } from "../pixi/pixi-stage";
 
 export const GameBoard: Component = () => {
   return (
