@@ -1,7 +1,6 @@
 import { type Component, createEffect, onCleanup } from "solid-js";
 import { useGameState } from "../contexts/game-state";
-
-const GAME_INTERVAL = 2000;
+import { GAME_INTERVAL } from "../utils/constants";
 
 export const GameLoop: Component = () => {
   const game = useGameState();

@@ -1,7 +1,5 @@
+import { PLAYER_ANGLE_VELOCITY, PLAYER_VELOCITY } from "./constants";
 import type { PlayerDirection, PlayerState } from "./types";
-
-const PLAYER_VELOCITY = 1;
-const PLAYER_ANGLE_VELOCITY = 0.1;
 
 export const getUpdatedPlayerPosition = ({ angle, position }: PlayerState) => {
   return {
