@@ -1,12 +1,7 @@
-import {
-  type Component,
-  createEffect,
-  createSignal,
-  onCleanup,
-  Show,
-} from "solid-js";
-import { GameStateProvider, useGameState } from "../contexts/game-state";
+import { type Component, createSignal, Show } from "solid-js";
+import { GameStateProvider } from "../contexts/game-state";
 import { PixiStage } from "../pixi/pixi-stage";
+import { GameLoop } from "./game-loop";
 
 export const GameBoard: Component = () => {
   return (
@@ -26,23 +21,4 @@ const ClientBoard: Component = () => {
       <Show when={canvas()}>{(canvas) => <PixiStage canvas={canvas()} />}</Show>
     </>
   );
-};
-
-const GAME_INTERVAL = 2000;
-
-const GameLoop: Component = () => {
-  const game = useGameState();
-
-  createEffect(() => {
-    const gameState = game();
-    const interval = setInterval(() => {
-      gameState.movePlayer();
-    }, GAME_INTERVAL);
-
-    onCleanup(() => {
-      clearInterval(interval);
-    });
-  });
-
-  return null;
 };

@@ -16,9 +16,9 @@ export const getUpdatedPlayerAngle = (
 ) => {
   switch (direction) {
     case "LEFT":
-      return angle + PLAYER_ANGLE_VELOCITY;
-    case "RIGHT":
       return angle - PLAYER_ANGLE_VELOCITY;
+    case "RIGHT":
+      return angle + PLAYER_ANGLE_VELOCITY;
     case "NONE":
       return angle;
   }

@@ -7,11 +7,12 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import type { PlayerDirection, PlayerState, TeamArea } from "../utils/types";
+import type { PlayerState, TeamArea } from "../utils/types";
 import {
   getUpdatedPlayerAngle,
   getUpdatedPlayerPosition,
 } from "../utils/updates";
+import { useCurrentDirection } from "../utils/use-current-direction";
 
 type GameStateStore = {
   teams: TeamArea[];
@@ -25,6 +26,8 @@ type CreateGameStateContextArgs = {
 const createGameStateContext = ({
   initialState,
 }: CreateGameStateContextArgs) => {
+  const direction = useCurrentDirection();
+
   const state = createMemo(() => {
     const [store, setStore] = createStore(initialState);
     return { setStore, store };
@@ -33,24 +36,20 @@ const createGameStateContext = ({
   const movePlayer = () => {
     state().setStore(
       produce((state) => {
+        const untrackedDirection = direction();
         const { x, y } = getUpdatedPlayerPosition(state.player);
+        const angle = getUpdatedPlayerAngle(state.player, untrackedDirection);
+
         state.player.position.x = x;
         state.player.position.y = y;
-      }),
-    );
-  };
-
-  const changePlayerAngle = (direction: PlayerDirection) => {
-    state().setStore(
-      produce((state) => {
-        const angle = getUpdatedPlayerAngle(state.player, direction);
         state.player.angle = angle;
+
+        console.log({ angle, x, y });
       }),
     );
   };
 
   return {
-    changePlayerAngle,
     movePlayer,
     get store() {
       return state().store;

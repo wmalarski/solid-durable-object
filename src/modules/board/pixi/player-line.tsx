@@ -22,7 +22,6 @@ export const PlayerLine: Component = () => {
 
   createEffect(() => {
     const position = game().store.player.position;
-    console.log("position", position.x, position.y);
     graphics.x = position.x;
     graphics.y = position.y;
   });
