@@ -5,11 +5,15 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "solid-durable-object",
+	"main": "./.output/server/index.mjs",
 	"compatibility_date": "2025-05-19",
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
-	"pages_build_output_dir": "./dist",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./.output/public"
+	},
 	"observability": {
 		"enabled": true
 	}

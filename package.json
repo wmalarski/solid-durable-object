@@ -35,11 +35,11 @@
   "scripts": {
     "build": "vinxi build",
     "cf-typegen": "wrangler types",
-    "deploy": "pnpm run build && wrangler pages deploy",
+    "deploy": "pnpm run build && wrangler deploy",
     "dev": "vinxi dev",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
-    "preview": "pnpm run build && npx wrangler pages dev",
+    "preview": "pnpm run build && npx wrangler dev",
     "start": "vinxi start",
     "tsc": "tsc --noEmit",
     "version": "vinxi version"
