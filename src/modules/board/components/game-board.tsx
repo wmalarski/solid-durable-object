@@ -1,10 +1,8 @@
 import { type Component, createSignal, Show } from "solid-js";
 import { GameStateProvider } from "../contexts/game-state";
-import {
-  WebsocketConnection,
-  WebsocketConnectionProvider,
-} from "../contexts/websocket-connection";
+import { WebsocketConnectionProvider } from "../contexts/websocket-connection";
 import { PixiStage } from "../pixi/pixi-stage";
+import { GameChat } from "./game-chat";
 import { GameLoop } from "./game-loop";
 
 export const GameBoard: Component = () => {
@@ -25,7 +23,7 @@ const ClientBoard: Component = () => {
     <>
       <canvas class="size-full bg-base-100" ref={setCanvas} />
       <Show when={canvas()}>{(canvas) => <PixiStage canvas={canvas()} />}</Show>
-      <WebsocketConnection />
+      <GameChat />
     </>
   );
 };
