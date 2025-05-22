@@ -11,12 +11,7 @@
     }
   },
   "files": {
-    "includes": [
-      "**",
-      "!**/worker-configuration.d.ts",
-      "!**/wrangler.jsonc",
-      "!**/src/app.css"
-    ]
+    "includes": ["**", "!**/worker-configuration.d.ts", "!**/src/app.css"]
   },
   "formatter": {
     "enabled": true,
