@@ -1,7 +1,42 @@
 import { createWS } from "@solid-primitives/websocket";
-import { For, onCleanup } from "solid-js";
+import {
+  type Component,
+  createContext,
+  For,
+  onCleanup,
+  type ParentProps,
+  useContext,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { Button } from "~/ui/button/button";
+
+const createWebsocketConnectionContext = () => {
+  return createWS(hrefToWs(location));
+};
+
+const WebsocketConnectionContext = createContext<ReturnType<
+  typeof createWebsocketConnectionContext
+> | null>(null);
+
+export const WebsocketConnectionProvider: Component<ParentProps> = (props) => {
+  const ws = createWebsocketConnectionContext();
+
+  return (
+    <WebsocketConnectionContext.Provider value={ws}>
+      {props.children}
+    </WebsocketConnectionContext.Provider>
+  );
+};
+
+export const useWebsocketConnection = () => {
+  const context = useContext(WebsocketConnectionContext);
+
+  if (!context) {
+    throw new Error("WebsocketConnectionContext is not defined");
+  }
+
+  return context;
+};
 
 // Custom types
 type Message = {
@@ -16,10 +51,10 @@ const hrefToWs = (location: Location) =>
   `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws/`;
 
 export const WebsocketConnection = () => {
+  const ws = useWebsocketConnection();
+
   // Store of messages to be displayed; adding and clearing
   const [messages, setMessages] = createStore<Array<Message>>([]);
-
-  const ws = createWS(hrefToWs(location));
 
   const log = (user: string, ...args: Array<string>) => {
     console.log("[ws]", user, ...args);
@@ -48,7 +83,9 @@ export const WebsocketConnection = () => {
   };
 
   const abortController = new AbortController();
-  ws.addEventListener("message", onMessage, { signal: abortController.signal });
+  ws.addEventListener("message", onMessage, {
+    signal: abortController.signal,
+  });
   onCleanup(() => {
     abortController.abort();
   });

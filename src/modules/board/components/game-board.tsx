@@ -1,15 +1,20 @@
 import { type Component, createSignal, Show } from "solid-js";
 import { GameStateProvider } from "../contexts/game-state";
-import { WebsocketConnection } from "../contexts/websocket-connection";
+import {
+  WebsocketConnection,
+  WebsocketConnectionProvider,
+} from "../contexts/websocket-connection";
 import { PixiStage } from "../pixi/pixi-stage";
 import { GameLoop } from "./game-loop";
 
 export const GameBoard: Component = () => {
   return (
-    <GameStateProvider>
-      <ClientBoard />
-      <GameLoop />
-    </GameStateProvider>
+    <WebsocketConnectionProvider>
+      <GameStateProvider>
+        <ClientBoard />
+        <GameLoop />
+      </GameStateProvider>
+    </WebsocketConnectionProvider>
   );
 };
 
