@@ -1,4 +1,5 @@
-import { For, onMount } from "solid-js";
+import { createWS } from "@solid-primitives/websocket";
+import { For, onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Button } from "~/ui/button/button";
 
@@ -9,60 +10,16 @@ type Message = {
   createdAt: string;
 };
 
-type WsContext = {
-  ws: WebSocket | undefined;
-  href: string;
-  onMessage: (event: MessageEvent<string>) => void;
-  log: (user: string, ...args: Array<string>) => void;
-  clear: () => void;
-  send: (data: string | ArrayBufferLike | Blob | ArrayBufferView) => void;
-};
-
 const APPLICATION_ID = "app";
-
-// Top level helpers
-const gravatarSuffix = Math.random().toString();
-const gravatarHref = (user: string) =>
-  `https://www.gravatar.com/avatar/${encodeURIComponent(user + gravatarSuffix)}?s=512&d=monsterid`;
 
 const hrefToWs = (location: Location) =>
   `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws/`;
 
-// WebSocket related
-function wsConnect(ctx: WsContext) {
-  if (ctx.ws) {
-    ctx.log("ws", "Closing previous connection before reconnecting…");
-    ctx.ws.close();
-    ctx.ws = undefined;
-    ctx.clear();
-  }
-
-  ctx.log("ws", "Connecting to", ctx.href, "…");
-  const ws = new WebSocket(ctx.href);
-
-  ws.addEventListener("message", ctx.onMessage);
-  ws.addEventListener("open", () => {
-    ctx.ws = ws;
-    ctx.log("ws", "Connected!");
-  });
-}
-
 export const WebsocketConnection = () => {
-  // Message scrolling
-  let messageList: HTMLDivElement | undefined;
-  const scrollToEnd = () => {
-    if (!messageList) return;
-
-    messageList.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "start",
-    });
-  };
-  const scroll = () => requestAnimationFrame(scrollToEnd);
-
   // Store of messages to be displayed; adding and clearing
   const [messages, setMessages] = createStore<Array<Message>>([]);
+
+  const ws = createWS(hrefToWs(location));
 
   const log = (user: string, ...args: Array<string>) => {
     console.log("[ws]", user, ...args);
@@ -90,35 +47,26 @@ export const WebsocketConnection = () => {
     log(user, typeof message === "string" ? message : JSON.stringify(message));
   };
 
-  let wsContext: WsContext;
-  const connect = () => wsConnect(wsContext);
-  const ping = () => {
-    if (!wsContext.ws) return;
-
-    log("ws", "Sending ping");
-    wsContext.send("ping");
-  };
-
-  onMount(() => {
-    // Initialize once monted client side
-    wsContext = {
-      clear,
-      href: hrefToWs(location),
-      log,
-      onMessage,
-      send: (data) => wsContext.ws?.send(data),
-      ws: undefined,
-    };
-    connect();
+  const abortController = new AbortController();
+  ws.addEventListener("message", onMessage, { signal: abortController.signal });
+  onCleanup(() => {
+    abortController.abort();
   });
+
+  const ping = () => {
+    log("ws", "Sending ping");
+    ws.send("ping");
+  };
 
   // Chatbox
   let chatMessage: HTMLInputElement | undefined;
   const send = () => {
-    if (!chatMessage || !chatMessage.value || !wsContext.ws) return;
+    if (!chatMessage || !chatMessage.value) return;
 
     console.log("sending message…");
-    wsContext.send(chatMessage.value);
+
+    ws.send(chatMessage.value);
+
     chatMessage.value = "";
   };
   const sendMessage = (event: KeyboardEvent) => {
@@ -127,17 +75,14 @@ export const WebsocketConnection = () => {
 
   return (
     <div class="absolute top-0 left-0">
-      <div id="messages" ref={messageList}>
+      <div id="messages">
         <For each={messages}>
           {(message) => (
             <div class="c-message">
               <div>
                 <p class="c-message__annotation">{message.user}</p>
                 <div class="c-message__card">
-                  <img alt="Avatar" src={gravatarHref(message.user)} />
-                  <div>
-                    <p>{message.text}</p>
-                  </div>
+                  <p>{message.text}</p>
                 </div>
                 <p class="c-message__annotation">{message.createdAt}</p>
               </div>
@@ -157,7 +102,6 @@ export const WebsocketConnection = () => {
         <div class="c-chatbox__menu">
           <Button onClick={send}>Send</Button>
           <Button onClick={ping}>Ping</Button>
-          <Button onClick={connect}>Reconnect</Button>
           <Button onClick={clear}>Clear</Button>
         </div>
       </div>
