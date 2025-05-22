@@ -10,6 +10,7 @@ export default defineConfig({
     //   },
     // },
     compatibilityDate: "2025-05-21",
+    experimental: { websocket: true },
     preset: "cloudflare_durable",
   },
   vite: {
