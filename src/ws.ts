@@ -9,8 +9,10 @@ const toPayload = (from: string, message: string) =>
 const CHANNEL_NAME = "chat";
 const SERVER_ID = "server";
 
-export default eventHandler({
-  handler() {},
+const wsEventHandler = eventHandler({
+  handler(event) {
+    console.log("[ws] handler", event);
+  },
   websocket: {
     async close(peer, details) {
       const user = userFromId(peer.id);
@@ -56,3 +58,34 @@ export default eventHandler({
     },
   },
 });
+
+export default wsEventHandler;
+
+// export class $DurableObject extends DurableObject {
+//   fetch(request) {
+//     return ws.handleDurableUpgrade(this, request);
+//   }
+//   webSocketMessage(client, message) {
+//     return ws.handleDurableMessage(this, client, message);
+//   }
+//   webSocketClose(client, code, reason, wasClean) {
+//     return ws.handleDurableClose(this, client, code, reason, wasClean);
+//   }
+// }
+
+// export class $DurableObject extends DurableObject {
+//   fetch(request: Request) {
+//     return ws.handleDurableUpgrade(this, request);
+//   }
+//   webSocketMessage(client: WebSocket, message: string | ArrayBuffer) {
+//     return ws.handleDurableMessage(this, client, message);
+//   }
+//   webSocketClose(
+//     client: WebSocket,
+//     code: number,
+//     reason: string,
+//     wasClean: boolean,
+//   ) {
+//     return ws.handleDurableClose(this, client, code, reason, wasClean);
+//   }
+// }

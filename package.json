@@ -20,6 +20,7 @@
     "@types/node": "^22.15.21",
     "daisyui": "5.0.37",
     "knip": "^5.57.2",
+    "nitro-cloudflare-dev": "^0.2.2",
     "tailwindcss": "4.1.7",
     "wrangler": "^4.16.1"
   },
