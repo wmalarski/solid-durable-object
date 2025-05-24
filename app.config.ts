@@ -4,29 +4,17 @@ import nitroCloudflareBindings from "nitro-cloudflare-dev";
 
 export default defineConfig({
   server: {
-    cloudflare: {
-      deployConfig: true,
-      nodeCompat: true,
-      wrangler: {
-        assets: {
-          binding: "ASSETS",
-          directory: "./.output/public",
-          not_found_handling: "single-page-application",
-        },
-        compatibility_date: "2025-05-21",
-        durable_objects: {
-          bindings: [{ class_name: "$DurableObject", name: "$DurableObject" }],
-        },
-        observability: {
-          enabled: true,
-        },
-      },
-    },
+    cloudflare: { nodeCompat: true },
     experimental: { websocket: true },
     modules: [nitroCloudflareBindings],
     preset: "cloudflare_durable",
   },
   vite: {
+    build: {
+      rollupOptions: {
+        external: ["@cloudflare/workers-types", "cloudflare:workers"],
+      },
+    },
     plugins: [tailwindcss()],
   },
 }).addRouter({
