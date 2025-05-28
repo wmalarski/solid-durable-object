@@ -7,7 +7,7 @@ import {
 } from "solid-js";
 
 const hrefToWs = (location: Location) =>
-  `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/ws/`;
+  `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws/`;
 
 const createWebsocketConnectionContext = () => {
   return createWS(hrefToWs(location));
