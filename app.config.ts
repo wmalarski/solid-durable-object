@@ -6,6 +6,9 @@ export default defineConfig({
   server: {
     cloudflare: { nodeCompat: true },
     experimental: { websocket: true },
+    externals: {
+      external: ["@cloudflare/workers-types", "cloudflare:workers"],
+    },
     modules: [nitroCloudflareBindings],
     preset: "cloudflare_durable",
   },
@@ -16,6 +19,12 @@ export default defineConfig({
       },
     },
     plugins: [tailwindcss()],
+    resolve: {
+      external: ["@cloudflare/workers-types", "cloudflare:workers"],
+    },
+    ssr: {
+      external: ["@cloudflare/workers-types", "cloudflare:workers"],
+    },
   },
 }).addRouter({
   base: "/ws",
