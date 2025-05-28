@@ -4,11 +4,7 @@ import nitroCloudflareBindings from "nitro-cloudflare-dev";
 
 export default defineConfig({
   server: {
-    cloudflare: { nodeCompat: true },
-    experimental: { websocket: true },
-    externals: {
-      external: ["@cloudflare/workers-types", "cloudflare:workers"],
-    },
+    cloudflare: { deployConfig: true, nodeCompat: true },
     modules: [nitroCloudflareBindings],
     preset: "cloudflare_durable",
   },
@@ -19,17 +15,5 @@ export default defineConfig({
       },
     },
     plugins: [tailwindcss()],
-    resolve: {
-      external: ["@cloudflare/workers-types", "cloudflare:workers"],
-    },
-    ssr: {
-      external: ["@cloudflare/workers-types", "cloudflare:workers"],
-    },
   },
-}).addRouter({
-  base: "/ws",
-  handler: "./src/ws.ts",
-  name: "ws",
-  target: "server",
-  type: "http",
 });
