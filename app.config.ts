@@ -1,7 +1,6 @@
 import { defineConfig } from "@solidjs/start/config";
 import tailwindcss from "@tailwindcss/vite";
 import nitroCloudflareBindings from "nitro-cloudflare-dev";
-import { config } from "vinxi/plugins/config";
 
 export default defineConfig({
   server: {
@@ -17,19 +16,20 @@ export default defineConfig({
     },
     plugins: [tailwindcss()],
   },
-}).addRouter({
-  base: "/ws",
-  handler: "./src/ws.ts",
-  name: "ws",
-  plugins: () => [
-    config("cf-build", {
-      build: {
-        rollupOptions: {
-          external: ["@cloudflare/workers-types", "cloudflare:workers"],
-        },
-      },
-    }),
-  ],
-  target: "server",
-  type: "http",
 });
+// .addRouter({
+//   base: "/ws",
+//   handler: "./src/ws.ts",
+//   name: "ws",
+//   plugins: () => [
+//     config("cf-build", {
+//       build: {
+//         rollupOptions: {
+//           external: ["@cloudflare/workers-types", "cloudflare:workers"],
+//         },
+//       },
+//     }),
+//   ],
+//   target: "server",
+//   type: "http",
+// });

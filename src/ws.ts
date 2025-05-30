@@ -1,18 +1,14 @@
-import { DurableObject } from "cloudflare:workers";
-import crossws from "crossws/adapters/cloudflare";
-import { eventHandler } from "vinxi/http";
-
-const ws = crossws({
-  bindingName: "$DurableObject",
-  hooks: {
-    message: console.log,
-    open(peer) {
-      peer.subscribe("chat");
-      peer.publish("chat", { message: `${peer} joined!`, user: "server" });
-    },
-  },
-  instanceName: "crossws",
-});
+// const ws = crossws({
+//   bindingName: "$DurableObject",
+//   hooks: {
+//     message: console.log,
+//     open(peer) {
+//       peer.subscribe("chat");
+//       peer.publish("chat", { message: `${peer} joined!`, user: "server" });
+//     },
+//   },
+//   instanceName: "crossws",
+// });
 
 // const userFromId = (id: string) => id.slice(-6);
 
@@ -23,92 +19,99 @@ const ws = crossws({
 // const CHANNEL_NAME = "chat";
 // const SERVER_ID = "server";
 
-export default eventHandler({
-  handler(event) {
-    console.log("[ws] handler", event);
-    const context = event.context.cloudflare;
-    // if (request.headers.get("upgrade") === "websocket") {
-    return ws.handleUpgrade(context.request, context.env, context.context);
-    // }
-    // return new Response(
-    //   `<script>new WebSocket("ws://localhost:3000").addEventListener("open", (e) => e.target.send("Hello from client!"));</script>`,
-    //   { headers: { "content-type": "text/html" } },
-    // );
-  },
-  // websocket: {
-  //   async close(peer, details) {
-  //     const user = userFromId(peer.id);
-  //     console.log("[ws] close", user, details);
+// export default eventHandler({
+//   handler() {},
+//   websocket: {},
+// });
 
-  //     peer.unsubscribe(CHANNEL_NAME);
-  //     peer.publish(
-  //       CHANNEL_NAME,
-  //       toPayload(SERVER_ID, `${user} has left the chat!`),
-  //     );
-  //   },
+// export default eventHandler({
 
-  //   async error(peer, error) {
-  //     console.log("[ws] error", userFromId(peer.id), error);
-  //   },
+//   // handler(event) {
+//   //   console.log("[ws] handler", event);
+//   //   const context = event.context.cloudflare;
+//   //   // if (request.headers.get("upgrade") === "websocket") {
+//   //   // return ws.handleUpgrade(context.request, context.env, context.context);
+//   //   // }
+//   //   // return new Response(
+//   //   //   `<script>new WebSocket("ws://localhost:3000").addEventListener("open", (e) => e.target.send("Hello from client!"));</script>`,
+//   //   //   { headers: { "content-type": "text/html" } },
+//   //   // );
+//   // },
+//   // websocket: ws,
+//   // websocket: {
+//   //   async close(peer, details) {
+//   //     const user = userFromId(peer.id);
+//   //     console.log("[ws] close", user, details);
 
-  //   async message(peer, message) {
-  //     const user = userFromId(peer.id);
-  //     console.log("[ws] message", user, message);
+//   //     peer.unsubscribe(CHANNEL_NAME);
+//   //     peer.publish(
+//   //       CHANNEL_NAME,
+//   //       toPayload(SERVER_ID, `${user} has left the chat!`),
+//   //     );
+//   //   },
 
-  //     const content = message.text();
-  //     if (content.includes("ping")) {
-  //       peer.send("pong");
-  //       return;
-  //     }
+//   //   async error(peer, error) {
+//   //     console.log("[ws] error", userFromId(peer.id), error);
+//   //   },
 
-  //     const payload = toPayload(peer.id, content);
-  //     // The server re-broadcasts incoming messages to everyone …
-  //     peer.publish(CHANNEL_NAME, payload);
-  //     // … but the source
-  //     peer.send(payload);
-  //   },
-  //   async open(peer) {
-  //     console.log("[ws] open", peer);
+//   //   async message(peer, message) {
+//   //     const user = userFromId(peer.id);
+//   //     console.log("[ws] message", user, message);
 
-  //     const user = userFromId(peer.id);
-  //     peer.send(toPayload(SERVER_ID, `Welcome ${user}`));
+//   //     const content = message.text();
+//   //     if (content.includes("ping")) {
+//   //       peer.send("pong");
+//   //       return;
+//   //     }
 
-  //     // Join new client to the "chat" channel
-  //     peer.subscribe(CHANNEL_NAME);
-  //     // Notify every other connected client
-  //     peer.publish(CHANNEL_NAME, toPayload(SERVER_ID, `${user} joined!`));
-  //   },
-  // },
-});
+//   //     const payload = toPayload(peer.id, content);
+//   //     // The server re-broadcasts incoming messages to everyone …
+//   //     peer.publish(CHANNEL_NAME, payload);
+//   //     // … but the source
+//   //     peer.send(payload);
+//   //   },
+//   //   async open(peer) {
+//   //     console.log("[ws] open", peer);
 
-export class $DurableObject extends DurableObject {
-  constructor(state: DurableObjectState, env: unknown) {
-    super(state, env);
-    ws.handleDurableInit(this, state, env);
-  }
+//   //     const user = userFromId(peer.id);
+//   //     peer.send(toPayload(SERVER_ID, `Welcome ${user}`));
 
-  fetch(request: Request) {
-    return ws.handleDurableUpgrade(this, request);
-  }
+//   //     // Join new client to the "chat" channel
+//   //     peer.subscribe(CHANNEL_NAME);
+//   //     // Notify every other connected client
+//   //     peer.publish(CHANNEL_NAME, toPayload(SERVER_ID, `${user} joined!`));
+//   //   },
+//   // },
+// });
 
-  webSocketMessage(client: WebSocket, message: string) {
-    return ws.handleDurableMessage(this, client, message);
-  }
+// export class $DurableObject extends DurableObject {
+//   constructor(state: DurableObjectState, env: unknown) {
+//     super(state, env);
+//     ws.handleDurableInit(this, state, env);
+//   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: ws type
-  webSocketPublish(topic: string, message: unknown, opts: any) {
-    return ws.handleDurablePublish(this, topic, message, opts);
-  }
+//   fetch(request: Request) {
+//     return ws.handleDurableUpgrade(this, request);
+//   }
 
-  webSocketClose(
-    client: WebSocket,
-    code: number,
-    reason: string,
-    wasClean: boolean,
-  ) {
-    return ws.handleDurableClose(this, client, code, reason, wasClean);
-  }
-}
+//   webSocketMessage(client: WebSocket, message: string) {
+//     return ws.handleDurableMessage(this, client, message);
+//   }
+
+//   // biome-ignore lint/suspicious/noExplicitAny: ws type
+//   webSocketPublish(topic: string, message: unknown, opts: any) {
+//     return ws.handleDurablePublish(this, topic, message, opts);
+//   }
+
+//   webSocketClose(
+//     client: WebSocket,
+//     code: number,
+//     reason: string,
+//     wasClean: boolean,
+//   ) {
+//     return ws.handleDurableClose(this, client, code, reason, wasClean);
+//   }
+// }
 
 // export class $DurableObject implements DurableObject {
 //   fetch(request) {
