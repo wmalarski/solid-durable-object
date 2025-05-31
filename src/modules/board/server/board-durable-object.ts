@@ -1,8 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
 import { ws } from "./websocket";
 
-export class BoardDurableObject extends DurableObject {
-  constructor(state: DurableObjectState, env: unknown) {
+export class BoardDurableObject extends DurableObject<Env> {
+  constructor(state: DurableObjectState, env: Env) {
     super(state, env);
     ws.handleDurableInit(this, state, env);
   }

@@ -1,4 +1,4 @@
 export type LobbyData = {
-  id: string;
-  playerIds: string[];
+  id: DurableObjectId;
+  userIps: string[];
 };
