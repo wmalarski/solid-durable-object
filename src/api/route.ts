@@ -4,7 +4,6 @@ import { $DurableObject } from "../modules/board/durable/durable";
 const app = new Hono<{ Bindings: Env }>();
 
 app.get("/hello", (c) => {
-  // console.log("c.env", c.env, c.event);
   return c.json({
     message: "Hello Next.js!",
   });
