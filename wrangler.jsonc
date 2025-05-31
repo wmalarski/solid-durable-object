@@ -6,15 +6,16 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "assets": {
     "binding": "ASSETS",
-    "directory": "./.output/public",
-    "not_found_handling": "single-page-application"
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
   },
   "compatibility_date": "2025-05-19",
   "compatibility_flags": ["nodejs_compat"],
   "durable_objects": {
     "bindings": [{ "class_name": "$DurableObject", "name": "$DurableObject" }]
   },
-  "main": "./.output/server/index.mjs",
+  "main": "./src/api/route.ts",
   "migrations": [{ "new_classes": ["$DurableObject"], "tag": "v1" }],
   "name": "solid-durable-object",
   "observability": {
