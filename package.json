@@ -45,9 +45,11 @@
     "build": "vite build",
     "cf-typegen": "wrangler types",
     "deploy": "pnpm run build && wrangler deploy",
+    "dev": "vite",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "preview": "pnpm run build && npx wrangler dev",
+    "start": "vite preview",
     "tsc": "tsc --noEmit"
   },
   "type": "module"

@@ -2,13 +2,11 @@ import { type Component, type ComponentProps, For, onCleanup } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Button } from "~/ui/button/button";
 import { useWebsocketConnection } from "../contexts/websocket-connection";
-
-// Custom types
-type Message = {
-  text: string;
-  user: string;
-  createdAt: string;
-};
+import type {
+  WebsocketChatSendMessage,
+  WebsocketChatServerMessage,
+  WebsocketMessage,
+} from "../durable/types";
 
 const APPLICATION_ID = "app";
 
@@ -16,7 +14,7 @@ export const GameChat: Component = () => {
   const ws = useWebsocketConnection();
 
   // Store of messages to be displayed; adding and clearing
-  const [messages, setMessages] = createStore<Array<Message>>([]);
+  const [messages, setMessages] = createStore<Array<WebsocketMessage>>([]);
 
   const log = (user: string, ...args: Array<string>) => {
     console.log("[ws]", user, ...args);
@@ -38,7 +36,7 @@ export const GameChat: Component = () => {
   // Websocket message handler & support
   const onMessage = (event: MessageEvent<string>) => {
     const { user, message } = event.data.startsWith("{")
-      ? (JSON.parse(event.data) as { user: string; message: unknown })
+      ? (JSON.parse(event.data) as WebsocketChatServerMessage)
       : { message: event.data, user: APPLICATION_ID };
 
     log(user, typeof message === "string" ? message : JSON.stringify(message));
@@ -86,9 +84,12 @@ const GameChatbox: Component = () => {
 
   const onSubmit: ComponentProps<"form">["onSubmit"] = (event) => {
     event.preventDefault();
+
     const formData = new FormData(event.currentTarget);
     const value = formData.get("text") as string;
-    ws.send(value);
+
+    const message: WebsocketChatSendMessage = { content: value };
+    ws.send(JSON.stringify(message));
 
     event.currentTarget.reset();
   };

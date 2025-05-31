@@ -6,8 +6,11 @@ import {
   useContext,
 } from "solid-js";
 
-const hrefToWs = (location: Location) =>
-  `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/api/ws/`;
+const hrefToWs = (location: Location) => {
+  const host = import.meta.env.DEV ? "localhost:8787" : location.host;
+  console.log("import.meta.env", import.meta.env.DEV);
+  return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/ws`;
+};
 
 const createWebsocketConnectionContext = () => {
   return createWS(hrefToWs(location));
