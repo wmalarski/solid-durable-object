@@ -1,4 +1,10 @@
-import { type Component, type ComponentProps, For, onCleanup } from "solid-js";
+import {
+  type Component,
+  type ComponentProps,
+  createEffect,
+  For,
+  onCleanup,
+} from "solid-js";
 import { createStore } from "solid-js/store";
 import { Button } from "~/ui/button/button";
 import { useWebsocketConnection } from "../contexts/websocket-connection";
@@ -43,12 +49,17 @@ export const GameChat: Component = () => {
   };
 
   const abortController = new AbortController();
-  ws.addEventListener("message", onMessage, { signal: abortController.signal });
-  onCleanup(() => abortController.abort());
+
+  createEffect(() => {
+    ws().addEventListener("message", onMessage, {
+      signal: abortController.signal,
+    });
+    onCleanup(() => abortController.abort());
+  });
 
   const ping = () => {
     log("ws", "Sending ping");
-    ws.send("ping");
+    ws().send("ping");
   };
 
   return (
@@ -89,7 +100,7 @@ const GameChatbox: Component = () => {
     const value = formData.get("text") as string;
 
     const message: WebsocketChatSendMessage = { content: value };
-    ws.send(JSON.stringify(message));
+    ws().send(JSON.stringify(message));
 
     event.currentTarget.reset();
   };

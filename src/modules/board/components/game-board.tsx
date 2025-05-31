@@ -1,4 +1,5 @@
 import { type Component, createSignal, Show } from "solid-js";
+import { GameConfigProvider } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
 import { WebsocketConnectionProvider } from "../contexts/websocket-connection";
 import { PixiStage } from "../pixi/pixi-stage";
@@ -7,12 +8,14 @@ import { GameLoop } from "./game-loop";
 
 export const GameBoard: Component = () => {
   return (
-    <WebsocketConnectionProvider>
-      <GameStateProvider>
-        <ClientBoard />
-        <GameLoop />
-      </GameStateProvider>
-    </WebsocketConnectionProvider>
+    <GameConfigProvider>
+      <WebsocketConnectionProvider>
+        <GameStateProvider>
+          <ClientBoard />
+          <GameLoop />
+        </GameStateProvider>
+      </WebsocketConnectionProvider>
+    </GameConfigProvider>
   );
 };
 

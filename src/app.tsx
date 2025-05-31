@@ -17,7 +17,7 @@ export default function App() {
           <Suspense>
             <Router>
               <Route component={HomeRoute} path="/" />
-              <Route component={BoardRoute} path="/game/:boardId" />
+              <Route component={BoardRoute} path="/game/:gameId" />
               <Route component={NotFound} path="*404" />
             </Router>
           </Suspense>

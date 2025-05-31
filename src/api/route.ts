@@ -12,12 +12,13 @@ api.get("/hello", (c) => {
   });
 });
 
-api.get("/ws", async (c) => {
+api.get("/ws/:gameId", async (c) => {
   if (c.req.header("upgrade") !== "websocket") {
     return c.text("Expected Upgrade: websocket", 426);
   }
 
-  const id = c.env.BoardDurableObject.idFromName("default");
+  const gameId = c.req.param("gameId");
+  const id = c.env.BoardDurableObject.idFromName(gameId);
   const stub = c.env.BoardDurableObject.get(id);
 
   return stub.fetch(c.req.raw);
