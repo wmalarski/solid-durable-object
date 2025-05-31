@@ -8,7 +8,6 @@ import {
 
 const hrefToWs = (location: Location) => {
   const host = import.meta.env.DEV ? "localhost:8787" : location.host;
-  console.log("import.meta.env", import.meta.env.DEV);
   return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/ws`;
 };
 

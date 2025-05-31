@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { type Component, splitProps } from "solid-js";
 import type { ComponentVariantProps } from "../utils/types";
 import { buttonRecipe } from "./button.recipe";
@@ -24,13 +25,16 @@ export const Button: Component<ButtonProps> = (props) => {
   );
 };
 
-export type LinkButtonProps = ComponentVariantProps<"a", typeof buttonRecipe>;
+export type LinkButtonProps = ComponentVariantProps<
+  typeof A,
+  typeof buttonRecipe
+>;
 
 export const LinkButton: Component<LinkButtonProps> = (props) => {
   const [variants, withoutVariants] = splitProps(props, buttonSplitProps);
 
   return (
-    <a
+    <A
       {...withoutVariants}
       class={buttonRecipe({ ...variants, class: props.class })}
     />

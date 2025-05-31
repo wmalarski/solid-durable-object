@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
+import type { Component } from "solid-js";
 
-export default function NotFound() {
+export const NotFound: Component = () => {
   return (
     <main>
       <Title>Not Found</Title>
@@ -15,4 +16,4 @@ export default function NotFound() {
       </p>
     </main>
   );
-}
+};
