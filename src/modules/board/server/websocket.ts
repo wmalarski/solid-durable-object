@@ -4,6 +4,7 @@ import type { WebsocketChatSendMessage } from "./types";
 const CHAT_CHANNEL = "chat";
 
 export const ws = crossws({
+  bindingName: "BoardDurableObject",
   hooks: {
     message: (peer, message) => {
       const json = message.json<WebsocketChatSendMessage>();

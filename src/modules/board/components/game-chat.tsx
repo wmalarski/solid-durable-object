@@ -6,7 +6,7 @@ import type {
   WebsocketChatSendMessage,
   WebsocketChatServerMessage,
   WebsocketMessage,
-} from "../durable/types";
+} from "../server/types";
 
 const APPLICATION_ID = "app";
 

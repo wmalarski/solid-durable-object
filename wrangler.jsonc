@@ -13,10 +13,15 @@
   "compatibility_date": "2025-05-19",
   "compatibility_flags": ["nodejs_compat"],
   "durable_objects": {
-    "bindings": [{ "class_name": "$DurableObject", "name": "$DurableObject" }]
+    "bindings": [
+      { "class_name": "BoardDurableObject", "name": "BoardDurableObject" },
+      { "class_name": "LobbyDurableObject", "name": "LobbyDurableObject" }
+    ]
   },
   "main": "./src/api/route.ts",
-  "migrations": [{ "new_classes": ["$DurableObject"], "tag": "v1" }],
+  "migrations": [
+    { "new_classes": ["BoardDurableObject", "LobbyDurableObject"], "tag": "v1" }
+  ],
   "name": "solid-durable-object",
   "observability": {
     "enabled": true
