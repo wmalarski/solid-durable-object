@@ -7,7 +7,7 @@ const GameBoard = lazy(() =>
   })),
 );
 
-export default function Home() {
+export default function HomePage() {
   const isMounted = createIsMounted();
 
   return (

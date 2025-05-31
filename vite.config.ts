@@ -1,10 +1,13 @@
 import devServer from "@hono/vite-dev-server";
+import cloudflareAdapter from "@hono/vite-dev-server/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import { createHtmlPlugin } from "vite-plugin-html";
 import solid from "vite-plugin-solid";
+import tsconfigPaths from "vite-tsconfig-paths";
 
-process.env = { ...process.env, ...loadEnv("production", process.cwd(), "") };
+//
+// process.env = { ...process.env, ...loadEnv("production", process.cwd(), "") };
 
 export default defineConfig({
   build: {
@@ -13,15 +16,16 @@ export default defineConfig({
     },
   },
   plugins: [
+    tsconfigPaths(),
     solid(),
     tailwindcss(),
-    createHtmlPlugin({
-      minify: true,
-    }),
+    createHtmlPlugin({ minify: true }),
     devServer({
-      entry: "./api/route.ts",
-      // include: [/^\/api/],
+      adapter: cloudflareAdapter,
+      entry: "./src/api/route.ts",
+      exclude: [/^(?!\/api)\/.*/],
     }),
+    // include: [/^\/api/],
   ],
 });
 /*
