@@ -1,6 +1,7 @@
 import { decode } from "decode-formdata";
 import { type Component, type ComponentProps, createSignal } from "solid-js";
 import * as v from "valibot";
+import { useHonoClient } from "~/modules/shared/hono-client";
 import { useI18n } from "~/modules/shared/i18n";
 import { Button } from "~/ui/button/button";
 import { formContainerRecipe } from "~/ui/form-container/form-container.recipe";
@@ -10,6 +11,8 @@ export const JoinForm: Component = () => {
   const { t } = useI18n();
 
   const [isPending, setIsPending] = createSignal(false);
+
+  const honoClient = useHonoClient();
 
   const onSubmit: ComponentProps<"form">["onSubmit"] = (event) => {
     event.preventDefault();
@@ -24,6 +27,8 @@ export const JoinForm: Component = () => {
       }),
       decode(formData),
     );
+
+    honoClient().api.join.$post();
 
     setIsPending(false);
   };
