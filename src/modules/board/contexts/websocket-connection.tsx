@@ -11,7 +11,7 @@ import { useGameConfig } from "./game-config";
 
 const hrefToWs = (location: Location, gameId: string) => {
   const host = import.meta.env.DEV ? "localhost:8787" : location.host;
-  return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/ws/${gameId}`;
+  return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/board/ws/${gameId}`;
 };
 
 const createWebsocketConnectionContext = (gameId: string) => {

@@ -35,7 +35,7 @@ export const JoinForm: Component = () => {
     }
 
     const response = await honoClient()
-      .api.join.$post({ json: parsed.output })
+      .api.lobby.join.$post({ json: parsed.output })
       .then((response) => response.json());
 
     navigate(paths.game(response.gameId));
