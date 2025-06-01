@@ -13,7 +13,7 @@ import { type FormIssues, getInvalidStateProps } from "~/utils/forms";
 
 type JoinFieldsProps = {
   pending?: boolean;
-  result?: FormIssues;
+  issues?: FormIssues;
 };
 
 export const JoinFields: Component<JoinFieldsProps> = (props) => {
@@ -25,7 +25,7 @@ export const JoinFields: Component<JoinFieldsProps> = (props) => {
     <Fieldset>
       <FieldsetLegend>{t("lobby.join.title")}</FieldsetLegend>
 
-      <FormError message={props.result?.error} />
+      <FormError message={props.issues?.error} />
 
       <FieldsetLabel for="name">{t("lobby.join.name")}</FieldsetLabel>
       <Input
@@ -36,10 +36,10 @@ export const JoinFields: Component<JoinFieldsProps> = (props) => {
         width="full"
         {...getInvalidStateProps({
           errorMessageId: "name-error",
-          isInvalid: !!props.result?.errors?.name,
+          isInvalid: !!props.issues?.errors?.name,
         })}
       />
-      <FieldError id="color-error" message={props.result?.errors?.name} />
+      <FieldError id="color-error" message={props.issues?.errors?.name} />
 
       <FieldsetLabel for="color">{t("lobby.join.color")}</FieldsetLabel>
       <Input
@@ -51,10 +51,10 @@ export const JoinFields: Component<JoinFieldsProps> = (props) => {
         width="full"
         {...getInvalidStateProps({
           errorMessageId: "color-error",
-          isInvalid: !!props.result?.errors?.color,
+          isInvalid: !!props.issues?.errors?.color,
         })}
       />
-      <FieldError id="color-error" message={props.result?.errors?.color} />
+      <FieldError id="color-error" message={props.issues?.errors?.color} />
     </Fieldset>
   );
 };
