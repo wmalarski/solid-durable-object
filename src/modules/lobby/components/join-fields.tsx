@@ -8,56 +8,53 @@ import {
 } from "~/ui/fieldset/fieldset";
 import { FormError } from "~/ui/form-error/form-error";
 import { Input } from "~/ui/input/input";
-import { getInvalidStateProps } from "~/utils/get-invalid-state-props";
+import { randomHexColor } from "~/utils/colors";
+import { type FormIssues, getInvalidStateProps } from "~/utils/forms";
 
 type JoinFieldsProps = {
   pending?: boolean;
-  result?: RpcFailure;
+  result?: FormIssues;
 };
 
 export const JoinFields: Component<JoinFieldsProps> = (props) => {
   const { t } = useI18n();
 
+  const defaultPlayerColor = randomHexColor();
+
   return (
     <Fieldset>
-      <FieldsetLegend>{props.title}</FieldsetLegend>
+      <FieldsetLegend>{t("lobby.join.title")}</FieldsetLegend>
 
       <FormError message={props.result?.error} />
 
-      <FieldsetLabel for="email">{t("auth.email")}</FieldsetLabel>
+      <FieldsetLabel for="name">{t("lobby.join.name")}</FieldsetLabel>
       <Input
         disabled={props.pending}
-        id="email"
-        inputMode="email"
-        name="email"
-        placeholder={t("auth.email")}
+        id="name"
+        name="name"
         required={true}
-        type="email"
         width="full"
         {...getInvalidStateProps({
-          errorMessageId: "email-error",
-          isInvalid: !!props.result?.errors?.email,
+          errorMessageId: "name-error",
+          isInvalid: !!props.result?.errors?.name,
         })}
       />
-      <FieldError id="email-error" message={props.result?.errors?.email} />
+      <FieldError id="color-error" message={props.result?.errors?.name} />
 
-      <FieldsetLabel for="password">{t("auth.password")}</FieldsetLabel>
+      <FieldsetLabel for="color">{t("lobby.join.color")}</FieldsetLabel>
       <Input
         disabled={props.pending}
-        id="password"
-        name="password"
-        placeholder={t("auth.password")}
-        type="password"
+        id="color"
+        name="color"
+        required={true}
+        value={defaultPlayerColor}
         width="full"
         {...getInvalidStateProps({
-          errorMessageId: "password-error",
-          isInvalid: !!props.result?.errors?.password,
+          errorMessageId: "color-error",
+          isInvalid: !!props.result?.errors?.color,
         })}
       />
-      <FieldError
-        id="password-error"
-        message={props.result?.errors?.password}
-      />
+      <FieldError id="color-error" message={props.result?.errors?.color} />
     </Fieldset>
   );
 };
