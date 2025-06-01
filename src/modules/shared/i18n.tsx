@@ -24,8 +24,6 @@ const enDict = {
   },
   homepage: {
     enterGame: "Enter Game",
-    gameName: "Game Name",
-    load: "Load",
   },
   info: {
     madeBy: "Made by wmalarski",

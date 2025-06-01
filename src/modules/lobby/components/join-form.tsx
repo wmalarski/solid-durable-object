@@ -12,6 +12,7 @@ import {
   DialogRoot,
   DialogTitle,
 } from "~/ui/dialog/dialog";
+import { formContainerRecipe } from "~/ui/form-container/form-container.recipe";
 import {
   TextFieldInput,
   TextFieldLabel,
@@ -29,7 +30,7 @@ export const JoinForm: Component = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form class={formContainerRecipe()} onSubmit={onSubmit}>
       Join
       <LinkButton href={paths.game("aa123")}>Room</LinkButton>
     </form>
