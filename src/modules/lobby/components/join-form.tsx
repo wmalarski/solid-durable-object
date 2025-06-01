@@ -8,7 +8,7 @@ import { Button } from "~/ui/button/button";
 import { formContainerRecipe } from "~/ui/form-container/form-container.recipe";
 import { type FormIssues, parseFormValidationError } from "~/utils/forms";
 import { paths } from "~/utils/paths";
-import { getJoinValidator } from "../server/validation";
+import { getJoinSchema } from "../server/validation";
 import { JoinFields } from "./join-fields";
 
 export const JoinForm: Component = () => {
@@ -27,7 +27,7 @@ export const JoinForm: Component = () => {
     setIsPending(true);
 
     const formData = new FormData(event.currentTarget);
-    const parsed = v.safeParse(getJoinValidator(), decode(formData));
+    const parsed = v.safeParse(getJoinSchema(), decode(formData));
 
     if (!parsed.success) {
       setFormIssues(parseFormValidationError(parsed.issues));
