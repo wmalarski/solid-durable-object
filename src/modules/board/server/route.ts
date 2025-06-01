@@ -1,9 +1,9 @@
 import { Hono } from "hono";
+import { getPlayerCookie } from "~/modules/player/server/cookies";
 import type { HonoContext } from "~/modules/shared/hono-types";
 
-export const boardApi = new Hono<HonoContext>().get(
-  "/ws/:gameId",
-  async (c) => {
+export const boardApi = new Hono<HonoContext>()
+  .get("/ws/:gameId", async (c) => {
     if (c.req.header("upgrade") !== "websocket") {
       return c.text("Expected Upgrade: websocket", 426);
     }
@@ -23,5 +23,8 @@ export const boardApi = new Hono<HonoContext>().get(
     const stub = c.env.BoardDurableObject.get(boardObjectId);
 
     return stub.fetch(c.req.raw);
-  },
-);
+  })
+  .get("/config/:gameId", async (c) => {
+    const player = getPlayerCookie(c);
+    return c.json({ player });
+  });

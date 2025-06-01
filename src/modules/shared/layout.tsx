@@ -32,9 +32,3 @@ export const FormLayout: Component<ParentProps> = (props) => {
     <main class="mx-auto flex flex-col items-center p-4">{props.children}</main>
   );
 };
-
-export const PageLayout: Component<ParentProps> = (props) => {
-  return (
-    <main class="mx-auto flex flex-col items-center">{props.children}</main>
-  );
-};

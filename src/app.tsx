@@ -5,7 +5,7 @@ import { ErrorFallback } from "./modules/shared/error-fallback";
 import { Head } from "./modules/shared/head";
 import { HonoClientProvider } from "./modules/shared/hono-client";
 import { I18nContextProvider } from "./modules/shared/i18n";
-import { BoardRoute } from "./routes/board-route";
+import { BoardRoute, preloadPlayer } from "./routes/board-route";
 import { HomeRoute } from "./routes/home-route";
 import { NotFound } from "./routes/not-found";
 
@@ -19,7 +19,11 @@ export default function App() {
             <Suspense>
               <Router>
                 <Route component={HomeRoute} path="/" />
-                <Route component={BoardRoute} path="/game/:gameId" />
+                <Route
+                  component={BoardRoute}
+                  path="/game/:gameId"
+                  preload={preloadPlayer}
+                />
                 <Route component={NotFound} path="*404" />
               </Router>
             </Suspense>
