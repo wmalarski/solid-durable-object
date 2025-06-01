@@ -26,6 +26,11 @@ export class BoardDurableObject extends DurableObject<Env> {
     reason: string,
     wasClean: boolean,
   ) {
+    const lobbyObjectId = this.env.LobbyDurableObject.idFromName("default");
+    const lobbyObject = this.env.LobbyDurableObject.get(lobbyObjectId);
+
+    // lobbyObject.leaveLobby();
+
     return ws.handleDurableClose(this, client, code, reason, wasClean);
   }
 }

@@ -2,11 +2,7 @@ import { tv } from "tailwind-variants";
 
 export const linkRecipe = tv({
   base: "link",
-  defaultVariants: {
-    color: undefined,
-    hover: undefined,
-    size: undefined,
-  },
+  defaultVariants: {},
   variants: {
     color: {
       accent: "link-accent",

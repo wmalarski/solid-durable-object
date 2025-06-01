@@ -6,6 +6,9 @@ const CHAT_CHANNEL = "chat";
 export const ws = crossws({
   bindingName: "BoardDurableObject",
   hooks: {
+    close(peer, details) {
+      console.log("peer.context", peer.context);
+    },
     message: (peer, message) => {
       const json = message.json<WebsocketChatSendMessage>();
       peer.publish(CHAT_CHANNEL, { message: json.content, user: peer.id });

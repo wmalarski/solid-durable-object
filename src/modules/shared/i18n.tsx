@@ -13,6 +13,9 @@ const enDict = {
   board: {
     loading: "loading",
   },
+  common: {
+    closeDialog: "Close dialog",
+  },
   error: {
     description: "Something went wrong: {{message}}",
     home: "Home",

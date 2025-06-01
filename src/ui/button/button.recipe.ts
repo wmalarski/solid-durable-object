@@ -3,11 +3,8 @@ import { tv } from "tailwind-variants";
 export const buttonRecipe = tv({
   base: "btn flex items-center gap-1",
   defaultVariants: {
-    color: undefined,
     isLoading: false,
-    shape: undefined,
     size: "md",
-    variant: undefined,
   },
   variants: {
     behaviour: {

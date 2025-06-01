@@ -1,50 +1,36 @@
 import { tv } from "tailwind-variants";
 
 export const cardRecipe = tv({
-  base: "card",
-  defaultVariants: {
-    bg: undefined,
-    color: undefined,
-    size: undefined,
-    variant: undefined,
-  },
+  base: "card bg-base-200",
+  defaultVariants: {},
   variants: {
-    bg: {
-      "base-100": "bg-base-100",
-      "base-200": "bg-base-200",
-      "base-300": "bg-base-300",
+    imageFull: {
+      true: "image-full",
     },
-    color: {
-      accent: "border-l-8 border-l-accent",
-      black: "border-l-8 border-l-neutral",
-      disabled: "border-l-8 border-l-base-200",
-      error: "border-l-8 border-l-error",
-      info: "border-l-8 border-l-info",
-      primary: "border-l-8 border-l-primary",
-      secondary: "border-l-8 border-l-secondary",
-      success: "border-l-8 border-l-success",
-      warning: "border-l-8 border-l-warning",
+    side: {
+      true: "card-side",
     },
     size: {
-      compact: "card-compact",
-      normal: "card-normal",
-      side: "card-side",
+      lg: "card-lg",
+      md: "card-md",
+      sm: "card-sm",
+      xl: "card-xl",
+      xs: "card-xs",
     },
     variant: {
-      bordered: "card-bordered",
+      bordered: "card-border",
+      dash: "card-dash",
     },
   },
 });
 
-export const cardTitleRecipe = tv({
-  base: "card-title",
-});
+export const cardTitleRecipe = tv({ base: "card-title" });
+
+export const cardBodyRecipe = tv({ base: "card-body" });
 
 export const cardActionsRecipe = tv({
   base: "card-actions",
-  defaultVariants: {
-    justify: undefined,
-  },
+  defaultVariants: {},
   variants: {
     justify: {
       end: "justify-end",

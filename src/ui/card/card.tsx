@@ -12,7 +12,7 @@ import { cardActionsRecipe, cardRecipe, cardTitleRecipe } from "./card.recipe";
 export type CardProps = ComponentVariantProps<"div", typeof cardRecipe>;
 
 export const Card: Component<CardProps> = (props) => {
-  const [split, rest] = splitProps(props, ["variant", "size", "color", "bg"]);
+  const [split, rest] = splitProps(props, ["variant", "size", "color"]);
 
   return <div {...rest} class={cardRecipe({ class: props.class, ...split })} />;
 };

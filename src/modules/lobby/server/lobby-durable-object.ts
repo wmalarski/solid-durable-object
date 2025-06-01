@@ -4,10 +4,10 @@ import type { LobbyData } from "./types";
 const MAX_LOBBY_SIZE = 2;
 
 export class LobbyDurableObject extends DurableObject<Env> {
-  fullLobbies = new Set<DurableObjectId>();
-  readyLobbies = [] as DurableObjectId[];
-  lobbies = new Map<DurableObjectId, LobbyData>();
-  userLobbies = new Map<string, DurableObjectId>();
+  private fullLobbies = new Set<DurableObjectId>();
+  private readyLobbies = [] as DurableObjectId[];
+  private lobbies = new Map<DurableObjectId, LobbyData>();
+  private userLobbies = new Map<string, DurableObjectId>();
 
   // constructor(state: DurableObjectState, env: Env) {
   //   super(state, env);
@@ -77,6 +77,4 @@ export class LobbyDurableObject extends DurableObject<Env> {
   hasLobby(lobbyId: DurableObjectId) {
     return this.lobbies.keys().some((id) => id.equals(lobbyId));
   }
-
-  getReadyLobby() {}
 }
