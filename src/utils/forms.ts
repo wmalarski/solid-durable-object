@@ -6,6 +6,20 @@ export type FormIssues = {
   success: false;
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: required
+export type FormSuccess<T = any> = {
+  data: T;
+  success: true;
+};
+
+// biome-ignore lint/suspicious/noExplicitAny: required
+export type FormResult<T = any> = FormIssues | FormSuccess<T>;
+
+// biome-ignore lint/suspicious/noExplicitAny: required
+export const parseFormSuccessResult = <T = any>(data: T): FormSuccess<T> => {
+  return { data, success: true };
+};
+
 export const parseFormValidationError = (
   issues: v.BaseIssue<unknown>[],
 ): FormIssues => {
@@ -18,6 +32,12 @@ export const parseFormValidationError = (
     ),
     success: false,
   };
+};
+
+export const parseFormException = <T extends { message: string }>(
+  error: T,
+): FormIssues => {
+  return { error: error.message, success: false };
 };
 
 type GetInvalidStateProps = {

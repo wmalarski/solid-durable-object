@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   server: {
+    devProxy: {},
     preset: "static",
   },
   vite: {
