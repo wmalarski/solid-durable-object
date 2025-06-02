@@ -1,35 +1,30 @@
 import { MetaProvider } from "@solidjs/meta";
-import { Route, Router } from "@solidjs/router";
+import { Router } from "@solidjs/router";
+import { FileRoutes } from "@solidjs/start/router";
 import { ErrorBoundary, Suspense } from "solid-js";
 import { ErrorFallback } from "./modules/shared/error-fallback";
 import { Head } from "./modules/shared/head";
 import { HonoClientProvider } from "./modules/shared/hono-client";
 import { I18nContextProvider } from "./modules/shared/i18n";
-import { BoardRoute, preloadPlayer } from "./routes/board-route";
-import { HomeRoute } from "./routes/home-route";
-import { NotFound } from "./routes/not-found";
+import "./app.css";
 
 export default function App() {
   return (
-    <HonoClientProvider>
-      <I18nContextProvider>
-        <MetaProvider>
-          <Head />
-          <ErrorBoundary fallback={ErrorFallback}>
-            <Suspense>
-              <Router>
-                <Route component={HomeRoute} path="/" />
-                <Route
-                  component={BoardRoute}
-                  path="/game/:gameId"
-                  preload={preloadPlayer}
-                />
-                <Route component={NotFound} path="*404" />
-              </Router>
-            </Suspense>
-          </ErrorBoundary>
-        </MetaProvider>
-      </I18nContextProvider>
-    </HonoClientProvider>
+    <Router
+      root={(props) => (
+        <HonoClientProvider>
+          <I18nContextProvider>
+            <MetaProvider>
+              <Head />
+              <ErrorBoundary fallback={ErrorFallback}>
+                <Suspense>{props.children}</Suspense>
+              </ErrorBoundary>
+            </MetaProvider>
+          </I18nContextProvider>
+        </HonoClientProvider>
+      )}
+    >
+      <FileRoutes />
+    </Router>
   );
 }

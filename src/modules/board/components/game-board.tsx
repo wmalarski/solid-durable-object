@@ -7,26 +7,20 @@ import { GameChat } from "./game-chat";
 import { GameLoop } from "./game-loop";
 
 export const GameBoard: Component = () => {
+  const [canvas, setCanvas] = createSignal<HTMLCanvasElement>();
+
   return (
     <GameConfigProvider>
       <WebsocketConnectionProvider>
         <GameStateProvider>
-          <ClientBoard />
+          <canvas class="size-full bg-base-100" ref={setCanvas} />
+          <Show when={canvas()}>
+            {(canvas) => <PixiStage canvas={canvas()} />}
+          </Show>
+          <GameChat />
           <GameLoop />
         </GameStateProvider>
       </WebsocketConnectionProvider>
     </GameConfigProvider>
-  );
-};
-
-const ClientBoard: Component = () => {
-  const [canvas, setCanvas] = createSignal<HTMLCanvasElement>();
-
-  return (
-    <>
-      <canvas class="size-full bg-base-100" ref={setCanvas} />
-      <Show when={canvas()}>{(canvas) => <PixiStage canvas={canvas()} />}</Show>
-      <GameChat />
-    </>
   );
 };

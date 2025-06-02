@@ -9,13 +9,17 @@ import {
 } from "solid-js";
 import type app from "~/api/route";
 
-const hrefToApi = (location: Location) => {
+const hrefToApi = () => {
+  if (typeof location === "undefined") {
+    return "/";
+  }
+
   const host = import.meta.env.DEV ? "localhost:8787" : location.host;
   return `${location.protocol}://${host}`;
 };
 
 const createHonoClientContext = () => {
-  return hc<typeof app>(hrefToApi(location));
+  return hc<typeof app>(hrefToApi());
 };
 
 export type HonoClient = ReturnType<typeof createHonoClientContext>;

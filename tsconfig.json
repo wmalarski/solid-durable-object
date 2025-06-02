@@ -12,8 +12,9 @@
     "paths": {
       "~/*": ["./src/*"]
     },
+    "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "types": ["./worker-configuration.d.ts", "node"]
+    "types": ["./worker-configuration.d.ts", "node", "vinxi/types/client"]
   }
 }

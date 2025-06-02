@@ -1,6 +1,6 @@
 import { Meta, Title } from "@solidjs/meta";
 import { type Component, createMemo } from "solid-js";
-import { getRequestEvent } from "solid-js/web";
+import { createIsomorphicUrl } from "~/utils/create-isomorphic-url";
 import { useI18n } from "./i18n";
 
 type HeadProps = {
@@ -19,10 +19,7 @@ export const Head: Component<HeadProps> = (props) => {
     return props.description ?? t("seo.description");
   });
 
-  const url = createMemo(() => {
-    const href = getRequestEvent()?.request.url || window.location.href;
-    return new URL(href);
-  });
+  const url = createIsomorphicUrl();
 
   const ogUrl = createMemo(() => {
     return `${url().origin}${url().pathname}`;
