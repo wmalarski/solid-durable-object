@@ -18,9 +18,9 @@ const createHonoClientContext = () => {
   return hc<typeof app>(hrefToApi(location));
 };
 
-const HonoClientContext = createContext<
-  Accessor<ReturnType<typeof createHonoClientContext>>
->(() => {
+export type HonoClient = ReturnType<typeof createHonoClientContext>;
+
+const HonoClientContext = createContext<Accessor<HonoClient>>(() => {
   throw new Error("HonoClientContext not defined");
 });
 
