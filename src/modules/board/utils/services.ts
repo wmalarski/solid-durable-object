@@ -1,15 +1,16 @@
 import { query } from "@solidjs/router";
-import type { HonoClient } from "~/modules/shared/hono-client";
+import { useHonoClient } from "~/modules/shared/hono-client";
 
-type GetBoardConfigArgs = {
-  honoClient: HonoClient;
+type GetBoardConfigQueryArgs = {
   gameId: string;
 };
 
-export const getBoardConfig = query(
-  async ({ honoClient, gameId }: GetBoardConfigArgs) => {
-    const result = await honoClient.api.board.config[":gameId"]
-      .$get({ param: { gameId } })
+export const getBoardConfigQuery = query(
+  async ({ gameId }: GetBoardConfigQueryArgs) => {
+    const honoClient = useHonoClient();
+
+    const result = await honoClient()
+      .api.board.config[":gameId"].$get({ param: { gameId } })
       .then((response) => response.json());
 
     return result;
@@ -17,4 +18,6 @@ export const getBoardConfig = query(
   "getBoardConfig",
 );
 
-export type GetBoardConfigReturn = Awaited<ReturnType<typeof getBoardConfig>>;
+export type GetBoardConfigReturn = Awaited<
+  ReturnType<typeof getBoardConfigQuery>
+>;

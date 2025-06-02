@@ -3,6 +3,7 @@ import type * as v from "valibot";
 export type FormIssues = {
   error?: string;
   errors?: Record<string, string>;
+  success: false;
 };
 
 export const parseFormValidationError = (
@@ -15,6 +16,7 @@ export const parseFormValidationError = (
         issue.message,
       ]),
     ),
+    success: false,
   };
 };
 

@@ -8,8 +8,10 @@ import {
   Show,
   useContext,
 } from "solid-js";
-import { useHonoClient } from "~/modules/shared/hono-client";
-import { type GetBoardConfigReturn, getBoardConfig } from "../utils/services";
+import {
+  type GetBoardConfigReturn,
+  getBoardConfigQuery,
+} from "../utils/services";
 
 const createGameConfig = (
   gameId: string,
@@ -26,10 +28,9 @@ const GameConfigContext = createContext<
 
 export const GameConfigProvider: Component<ParentProps> = (props) => {
   const params = useParams();
-  const honoClient = useHonoClient();
 
   const boardConfig = createAsync(() =>
-    getBoardConfig({ gameId: params.gameId, honoClient: honoClient() }),
+    getBoardConfigQuery({ gameId: params.gameId }),
   );
 
   return (

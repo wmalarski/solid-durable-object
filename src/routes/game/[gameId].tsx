@@ -1,7 +1,6 @@
 import type { RouteDefinition } from "@solidjs/router";
 import { lazy, Show } from "solid-js";
-import { getBoardConfig } from "~/modules/board/utils/services";
-import { useHonoClient } from "~/modules/shared/hono-client";
+import { getBoardConfigQuery } from "~/modules/board/utils/services";
 import { createIsMounted } from "~/utils/create-is-mounted";
 
 const GameBoard = lazy(() =>
@@ -12,11 +11,7 @@ const GameBoard = lazy(() =>
 
 export const route = {
   load: async ({ params }) => {
-    const honoClient = useHonoClient();
-    await getBoardConfig({
-      gameId: params.gameId,
-      honoClient: honoClient(),
-    });
+    await getBoardConfigQuery({ gameId: params.gameId });
   },
 } satisfies RouteDefinition;
 

@@ -47,6 +47,7 @@ export const JoinFields: Component<JoinFieldsProps> = (props) => {
         id="color"
         name="color"
         required={true}
+        type="color"
         value={defaultPlayerColor}
         width="full"
         {...getInvalidStateProps({
