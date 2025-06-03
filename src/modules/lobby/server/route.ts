@@ -7,27 +7,22 @@ import type { Player } from "~/modules/player/server/types";
 import type { HonoContext } from "~/modules/shared/hono-types";
 
 export const lobbyApi = new Hono<HonoContext>().post(
-  "/join",
-  vValidator("json", getJoinSchema()),
-  async (c) => {
-    const ip = c.req.header("CF-Connecting-IP");
+	"/join",
+	vValidator("json", getJoinSchema()),
+	async (c) => {
+		const json = c.req.valid("json");
+		const player: Player = { ...json, id: nanoid() };
+		setPlayerCookie(c, player);
 
-    const json = c.req.valid("json");
+		const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
+		const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
 
-    console.log("[join]", { ip });
+		console.log("[join]", { lobbyObjectId, lobbyObject, player });
 
-    if (!ip) {
-      return c.text("Invalid IP value", 400);
-    }
+		const gameId = await lobbyObject.joinLobby(player.id);
 
-    const player: Player = { ...json, id: nanoid() };
-    setPlayerCookie(c, player);
+		console.log("[join]", { lobbyObjectId, lobbyObject, player, gameId });
 
-    const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
-    const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
-    const durableObjectId = await lobbyObject.joinLobby(ip);
-    const gameId = await durableObjectId.toString();
-
-    return c.json({ gameId, player });
-  },
+		return c.json({ gameId, player });
+	},
 );
