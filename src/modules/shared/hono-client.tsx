@@ -6,7 +6,7 @@ const hrefToApi = () => {
     return "/";
   }
 
-  const host = import.meta.env.DEV ? "localhost:8787" : location.host;
+  const host = import.meta.env.DEV ? "localhost:3000" : location.host;
 
   const result = `${location.protocol}//${host}`;
 
