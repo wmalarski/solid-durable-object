@@ -12,7 +12,7 @@
     "decode-formdata": "^0.9.0",
     "hono": "^4.7.11",
     "nanoid": "^5.1.5",
-    "pixi.js": "8.10.0",
+    "pixi.js": "8.10.1",
     "solid-js": "^1.9.7",
     "tailwind-variants": "^1.0.0",
     "typescript": "^5.8.3",
@@ -21,19 +21,19 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.0-beta.6",
-    "@cloudflare/workers-types": "^4.20250603.0",
+    "@cloudflare/workers-types": "^4.20250605.0",
     "@hono/vite-dev-server": "^0.19.1",
     "@tailwindcss/vite": "^4.1.8",
     "@types/node": "^22.15.29",
     "daisyui": "5.0.43",
-    "knip": "^5.59.1",
+    "knip": "^5.60.2",
     "miniflare": "^4.20250525.1",
     "tailwindcss": "4.1.8",
     "vite": "^6.3.5",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-solid": "^2.11.6",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.18.0"
+    "wrangler": "^4.19.1"
   },
   "engines": {
     "node": ">=22"
