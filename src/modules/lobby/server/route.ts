@@ -7,22 +7,22 @@ import type { Player } from "~/modules/player/server/types";
 import type { HonoContext } from "~/modules/shared/hono-types";
 
 export const lobbyApi = new Hono<HonoContext>().post(
-	"/join",
-	vValidator("json", getJoinSchema()),
-	async (c) => {
-		const json = c.req.valid("json");
-		const player: Player = { ...json, id: nanoid() };
-		setPlayerCookie(c, player);
+  "/join",
+  vValidator("json", getJoinSchema()),
+  async (c) => {
+    const json = c.req.valid("json");
+    const player: Player = { ...json, id: nanoid() };
+    setPlayerCookie(c, player);
 
-		const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
-		const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
+    const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
+    const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
 
-		console.log("[join]", { lobbyObjectId, lobbyObject, player });
+    console.log("[join]", { lobbyObject, lobbyObjectId, player });
 
-		const gameId = await lobbyObject.joinLobby(player.id);
+    const gameId = await lobbyObject.joinLobby(player.id);
 
-		console.log("[join]", { lobbyObjectId, lobbyObject, player, gameId });
+    console.log("[join]", { gameId, lobbyObject, lobbyObjectId, player });
 
-		return c.json({ gameId, player });
-	},
+    return c.json({ gameId, player });
+  },
 );

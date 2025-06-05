@@ -6,7 +6,7 @@ const CHAT_CHANNEL = "chat";
 export const ws = crossws({
   bindingName: "BoardDurableObject",
   hooks: {
-    close(peer, details) {
+    close(peer, _details) {
       console.log("peer.context", peer.context);
     },
     message: (peer, message) => {
