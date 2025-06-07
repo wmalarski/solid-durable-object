@@ -7,7 +7,11 @@ export class BoardDurableObject extends DurableObject<Env> {
     ws.handleDurableInit(this, state, env);
   }
 
-  fetch(request: Request) {
+  async fetch(request: Request) {
+    // const lobbyObjectId = this.env.LobbyDurableObject.idFromName("default");
+    // const lobbyObject = this.env.LobbyDurableObject.get(lobbyObjectId);
+    // lobbyObject.join(request.)
+
     return ws.handleDurableUpgrade(this, request);
   }
 
@@ -26,10 +30,10 @@ export class BoardDurableObject extends DurableObject<Env> {
     reason: string,
     wasClean: boolean,
   ) {
-    const lobbyObjectId = this.env.LobbyDurableObject.idFromName("default");
-    const lobbyObject = this.env.LobbyDurableObject.get(lobbyObjectId);
+    // const lobbyObjectId = this.env.LobbyDurableObject.idFromName("default");
+    // const lobbyObject = this.env.LobbyDurableObject.get(lobbyObjectId);
 
-    // lobbyObject.leaveLobby();
+    // lobbyObject.leave(this.ctx.id.toString(), client.);
 
     return ws.handleDurableClose(this, client, code, reason, wasClean);
   }

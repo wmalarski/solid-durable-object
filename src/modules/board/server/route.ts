@@ -14,16 +14,15 @@ export const boardApi = new Hono<HonoContext>()
 
     const gameId = c.req.param("gameId");
 
-    const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
-    const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
-    const boardObjectId = c.env.BoardDurableObject.idFromName(gameId);
+    // const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
+    // const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
+    // const hasLobby = await lobbyObject.hasLobby(gameId);
 
-    const hasLobby = lobbyObject.hasLobby(boardObjectId);
+    // if (!hasLobby) {
+    //   return c.text("Invalid gameId value", 400);
+    // }
 
-    if (!hasLobby) {
-      return c.text("Invalid gameId value", 400);
-    }
-
+    const boardObjectId = c.env.BoardDurableObject.idFromString(gameId);
     const stub = c.env.BoardDurableObject.get(boardObjectId);
 
     return stub.fetch(c.req.raw);

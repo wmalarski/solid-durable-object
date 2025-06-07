@@ -19,10 +19,24 @@ export const lobbyApi = new Hono<HonoContext>().post(
 
     console.log("[join]", { lobbyObject, lobbyObjectId, player });
 
-    const gameId = await lobbyObject.joinLobby(player.id);
+    const gameId = await lobbyObject.getReadyLobby();
 
-    console.log("[join]", { gameId, lobbyObject, lobbyObjectId, player });
+    if (gameId) {
+      return c.json({ gameId });
+    }
 
-    return c.json({ gameId, player });
+    const boardObjectId = c.env.BoardDurableObject.newUniqueId();
+    const newGameId = boardObjectId.toString();
+    await lobbyObject.addLobby(newGameId);
+
+    console.log("[join]", {
+      gameId,
+      lobbyObject,
+      lobbyObjectId,
+      newGameId,
+      player,
+    });
+
+    return c.json({ gameId: newGameId });
   },
 );
