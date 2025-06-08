@@ -1,7 +1,7 @@
 import type { Component, ParentProps } from "solid-js";
 import { Link } from "~/ui/link/link";
 import { paths } from "~/utils/paths";
-import { useI18n } from "./i18n";
+import { useI18n } from "../../utils/i18n";
 
 export const PageTitle: Component = () => {
   const { t } = useI18n();

@@ -7,7 +7,7 @@ import {
   setPlayerCookie,
 } from "~/modules/player/server/cookies";
 import type { Player } from "~/modules/player/server/types";
-import type { HonoContext } from "~/modules/shared/hono-types";
+import type { HonoContext } from "~/utils/hono-types";
 import { getJoinSchema } from "./validation";
 
 const gameIdSchema = v.object({

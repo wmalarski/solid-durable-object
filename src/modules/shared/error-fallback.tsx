@@ -5,7 +5,7 @@ import { cardTitleRecipe } from "~/ui/card/card.recipe";
 import { XCircleIcon } from "~/ui/icons/x-circle-icon";
 import { Link } from "~/ui/link/link";
 import { paths } from "~/utils/paths";
-import { useI18n } from "./i18n";
+import { useI18n } from "../../utils/i18n";
 
 export const ErrorFallback = (error: unknown, reset: VoidFunction) => {
   const { t } = useI18n();

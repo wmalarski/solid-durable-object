@@ -29,13 +29,11 @@ const enDict = {
     madeBy: "Made by wmalarski",
     title: "Solid Area",
   },
-  lobby: {
-    join: {
-      color: "Color",
-      join: "Join",
-      name: "Name",
-      title: "Enter Your Name",
-    },
+  join: {
+    color: "Color",
+    join: "Join",
+    name: "Name",
+    title: "Enter Your Name",
   },
   notFound: {
     title: "Not Found",

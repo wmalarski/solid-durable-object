@@ -1,8 +1,8 @@
 import { useSubmission } from "@solidjs/router";
 import type { Component } from "solid-js";
-import { useI18n } from "~/modules/shared/i18n";
 import { Button } from "~/ui/button/button";
 import { formContainerRecipe } from "~/ui/form-container/form-container.recipe";
+import { useI18n } from "~/utils/i18n";
 import { joinLobbyAction } from "../server/services";
 import { JoinFields } from "./join-fields";
 
@@ -24,7 +24,7 @@ export const JoinForm: Component = () => {
         isLoading={submission.pending}
         type="submit"
       >
-        {t("lobby.join.join")}
+        {t("join.join")}
       </Button>
     </form>
   );

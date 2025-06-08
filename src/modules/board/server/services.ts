@@ -1,8 +1,8 @@
 import { action, query, redirect } from "@solidjs/router";
 import { decode } from "decode-formdata";
 import * as v from "valibot";
-import { makeHonoClient } from "~/modules/shared/hono-client";
 import { parseFormValidationError } from "~/utils/forms";
+import { makeHonoClient } from "~/utils/hono-client";
 import { paths } from "~/utils/paths";
 import { getJoinSchema } from "../../board/server/validation";
 

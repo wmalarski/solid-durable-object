@@ -1,6 +1,6 @@
 import type { Component } from "solid-js";
-import { useI18n } from "~/modules/shared/i18n";
 import { Loading } from "~/ui/loading/loading";
+import { useI18n } from "~/utils/i18n";
 
 export const GameLoader: Component = () => {
   const { t } = useI18n();

@@ -1,5 +1,5 @@
 import { type Component, type ComponentProps, splitProps } from "solid-js";
-import { useI18n } from "~/modules/shared/i18n";
+import { useI18n } from "~/utils/i18n";
 import { Button } from "../button/button";
 import type { ComponentVariantProps } from "../utils/types";
 import {

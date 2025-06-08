@@ -1,4 +1,4 @@
-import { JoinForm } from "~/modules/board/lobby/join-form";
+import { JoinForm } from "~/modules/board/join/join-form";
 import { FormLayout, PageFooter, PageTitle } from "~/modules/shared/layout";
 
 export default function HomeRoute() {

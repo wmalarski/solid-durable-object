@@ -1,5 +1,5 @@
 import { type Component, createSignal, Show } from "solid-js";
-import { JoinDialog } from "~/modules/board/lobby/join-dialog";
+import { JoinDialog } from "~/modules/board/join/join-dialog";
 import { GameConfigProvider, useGameConfig } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
 import { WebsocketConnectionProvider } from "../contexts/websocket-connection";

@@ -1,6 +1,5 @@
 import { useSubmission } from "@solidjs/router";
 import type { Component } from "solid-js";
-import { useI18n } from "~/modules/shared/i18n";
 import { Button } from "~/ui/button/button";
 import {
   closeDialog,
@@ -11,6 +10,7 @@ import {
   DialogClose,
   DialogTitle,
 } from "~/ui/dialog/dialog";
+import { useI18n } from "~/utils/i18n";
 import { useActionOnSubmit } from "~/utils/use-action-on-submit";
 import { joinLobbyAction } from "../server/services";
 import { JoinFields } from "./join-fields";
@@ -34,7 +34,7 @@ export const JoinDialog: Component = () => {
   return (
     <Dialog id={dialogId}>
       <DialogBox>
-        <DialogTitle>{t("lobby.join.join")}</DialogTitle>
+        <DialogTitle>{t("join.join")}</DialogTitle>
         <form id={formId} onSubmit={onSubmit}>
           <JoinFields issues={issues} pending={submission.pending} />
         </form>
@@ -47,7 +47,7 @@ export const JoinDialog: Component = () => {
             isLoading={submission.pending}
             type="submit"
           >
-            {t("lobby.join.join")}
+            {t("join.join")}
           </Button>
         </DialogActions>
       </DialogBox>

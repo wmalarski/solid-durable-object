@@ -1,5 +1,4 @@
 import type { Component } from "solid-js";
-import { useI18n } from "~/modules/shared/i18n";
 import { FieldError } from "~/ui/field-error/field-error";
 import {
   Fieldset,
@@ -10,6 +9,7 @@ import { FormError } from "~/ui/form-error/form-error";
 import { Input } from "~/ui/input/input";
 import { randomHexColor } from "~/utils/colors";
 import { type FormIssues, getInvalidStateProps } from "~/utils/forms";
+import { useI18n } from "~/utils/i18n";
 
 type JoinFieldsProps = {
   pending?: boolean;
@@ -23,11 +23,11 @@ export const JoinFields: Component<JoinFieldsProps> = (props) => {
 
   return (
     <Fieldset>
-      <FieldsetLegend>{t("lobby.join.title")}</FieldsetLegend>
+      <FieldsetLegend>{t("join.title")}</FieldsetLegend>
 
       <FormError message={props.issues?.error} />
 
-      <FieldsetLabel for="name">{t("lobby.join.name")}</FieldsetLabel>
+      <FieldsetLabel for="name">{t("join.name")}</FieldsetLabel>
       <Input
         disabled={props.pending}
         id="name"
@@ -41,7 +41,7 @@ export const JoinFields: Component<JoinFieldsProps> = (props) => {
       />
       <FieldError id="color-error" message={props.issues?.errors?.name} />
 
-      <FieldsetLabel for="color">{t("lobby.join.color")}</FieldsetLabel>
+      <FieldsetLabel for="color">{t("join.color")}</FieldsetLabel>
       <Input
         disabled={props.pending}
         id="color"
