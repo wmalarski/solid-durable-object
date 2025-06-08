@@ -1,0 +1,57 @@
+import { useSubmission } from "@solidjs/router";
+import type { Component } from "solid-js";
+import { useI18n } from "~/modules/shared/i18n";
+import { Button } from "~/ui/button/button";
+import {
+  closeDialog,
+  Dialog,
+  DialogActions,
+  DialogBackdrop,
+  DialogBox,
+  DialogClose,
+  DialogTitle,
+} from "~/ui/dialog/dialog";
+import { useActionOnSubmit } from "~/utils/use-action-on-submit";
+import { joinLobbyAction } from "../server/services";
+import { JoinFields } from "./join-fields";
+
+export const JoinDialog: Component = () => {
+  const { t } = useI18n();
+
+  const dialogId = "join-dialog";
+  const formId = "join-form";
+
+  const submission = useSubmission(joinLobbyAction);
+
+  const onSubmit = useActionOnSubmit({
+    action: joinLobbyAction,
+    onSuccess: () => closeDialog(dialogId),
+    resetOnSuccess: true,
+  });
+
+  const issues = submission.result?.success ? undefined : submission.result;
+
+  return (
+    <Dialog id={dialogId}>
+      <DialogBox>
+        <DialogTitle>{t("lobby.join.join")}</DialogTitle>
+        <form id={formId} onSubmit={onSubmit}>
+          <JoinFields issues={issues} pending={submission.pending} />
+        </form>
+        <DialogActions>
+          <DialogClose />
+          <Button
+            color="primary"
+            disabled={submission.pending}
+            form={formId}
+            isLoading={submission.pending}
+            type="submit"
+          >
+            {t("lobby.join.join")}
+          </Button>
+        </DialogActions>
+      </DialogBox>
+      <DialogBackdrop />
+    </Dialog>
+  );
+};

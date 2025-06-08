@@ -10,7 +10,6 @@ import { Button } from "~/ui/button/button";
 import { useWebsocketConnection } from "../contexts/websocket-connection";
 import type {
   WebsocketChatSendMessage,
-  WebsocketChatServerMessage,
   WebsocketMessage,
 } from "../server/types";
 
@@ -41,17 +40,17 @@ export const GameChat: Component = () => {
 
   // Websocket message handler & support
   const onMessage = (event: MessageEvent<string>) => {
-    const { user, message } = event.data.startsWith("{")
-      ? (JSON.parse(event.data) as WebsocketChatServerMessage)
-      : { message: event.data, user: APPLICATION_ID };
+    // const { user, message } = event.data.startsWith("{")
+    //   ? (JSON.parse(event.data) as WebsocketChatServerMessage)
+    //   : { message: event.data, user: APPLICATION_ID };
 
-    log(user, typeof message === "string" ? message : JSON.stringify(message));
+    log("user", event.data);
   };
 
   const abortController = new AbortController();
 
   createEffect(() => {
-    ws().addEventListener("message", onMessage, {
+    ws()?.addEventListener("message", onMessage, {
       signal: abortController.signal,
     });
     onCleanup(() => abortController.abort());
@@ -59,7 +58,7 @@ export const GameChat: Component = () => {
 
   const ping = () => {
     log("ws", "Sending ping");
-    ws().send("ping");
+    ws()?.send("ping");
   };
 
   return (
@@ -100,7 +99,7 @@ const GameChatbox: Component = () => {
     const value = formData.get("text") as string;
 
     const message: WebsocketChatSendMessage = { content: value };
-    ws().send(JSON.stringify(message));
+    ws()?.send(JSON.stringify(message));
 
     event.currentTarget.reset();
   };

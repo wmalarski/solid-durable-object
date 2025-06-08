@@ -20,9 +20,9 @@ const createGameConfig = (
   return { boardConfig, gameId };
 };
 
-const GameConfigContext = createContext<
-  Accessor<ReturnType<typeof createGameConfig>>
->(() => {
+export type GameConfig = ReturnType<typeof createGameConfig>;
+
+const GameConfigContext = createContext<Accessor<GameConfig>>(() => {
   throw new Error("GameConfigContext not defined");
 });
 

@@ -1,5 +1,6 @@
 import { type Component, createSignal, Show } from "solid-js";
-import { GameConfigProvider } from "../contexts/game-config";
+import { JoinDialog } from "~/modules/lobby/components/join-dialog";
+import { GameConfigProvider, useGameConfig } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
 import { WebsocketConnectionProvider } from "../contexts/websocket-connection";
 import { PixiStage } from "../pixi/pixi-stage";
@@ -11,6 +12,7 @@ export const GameBoard: Component = () => {
 
   return (
     <GameConfigProvider>
+      <JoinDialogFallback />
       <WebsocketConnectionProvider>
         <GameStateProvider>
           <canvas class="size-full bg-base-100" ref={setCanvas} />
@@ -22,5 +24,14 @@ export const GameBoard: Component = () => {
         </GameStateProvider>
       </WebsocketConnectionProvider>
     </GameConfigProvider>
+  );
+};
+
+const JoinDialogFallback: Component = () => {
+  const gameConfig = useGameConfig();
+  return (
+    <Show when={gameConfig().boardConfig?.player}>
+      <JoinDialog />
+    </Show>
   );
 };

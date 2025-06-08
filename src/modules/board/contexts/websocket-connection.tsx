@@ -7,15 +7,17 @@ import {
   type ParentProps,
   useContext,
 } from "solid-js";
-import { useGameConfig } from "./game-config";
+import { type GameConfig, useGameConfig } from "./game-config";
 
 const hrefToWs = (location: Location, gameId: string) => {
   const host = import.meta.env.DEV ? "localhost:8787" : location.host;
   return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/board/ws/${gameId}`;
 };
 
-const createWebsocketConnectionContext = (gameId: string) => {
-  return createWS(hrefToWs(location, gameId));
+const createWebsocketConnectionContext = (config: GameConfig) => {
+  return config.boardConfig?.player
+    ? createWS(hrefToWs(location, config.gameId))
+    : null;
 };
 
 const WebsocketConnectionContext = createContext<
@@ -26,9 +28,8 @@ const WebsocketConnectionContext = createContext<
 
 export const WebsocketConnectionProvider: Component<ParentProps> = (props) => {
   const gameConfig = useGameConfig();
-  const ws = createMemo(() =>
-    createWebsocketConnectionContext(gameConfig().gameId),
-  );
+
+  const ws = createMemo(() => createWebsocketConnectionContext(gameConfig()));
 
   return (
     <WebsocketConnectionContext.Provider value={ws}>
