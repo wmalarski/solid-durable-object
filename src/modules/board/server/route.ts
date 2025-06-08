@@ -4,7 +4,9 @@ import * as v from "valibot";
 import { getPlayerCookie } from "~/modules/player/server/cookies";
 import type { HonoContext } from "~/modules/shared/hono-types";
 
-const gameIdSchema = v.object({ gameId: v.pipe(v.string(), v.nonEmpty()) });
+const gameIdSchema = v.object({
+  gameId: v.pipe(v.string(), v.length(64), v.nonEmpty()),
+});
 
 export const boardApi = new Hono<HonoContext>()
   .get("/ws/:gameId", vValidator("param", gameIdSchema), async (c) => {
@@ -13,14 +15,6 @@ export const boardApi = new Hono<HonoContext>()
     }
 
     const gameId = c.req.param("gameId");
-
-    // const lobbyObjectId = c.env.LobbyDurableObject.idFromName("default");
-    // const lobbyObject = c.env.LobbyDurableObject.get(lobbyObjectId);
-    // const hasLobby = await lobbyObject.hasLobby(gameId);
-
-    // if (!hasLobby) {
-    //   return c.text("Invalid gameId value", 400);
-    // }
 
     const boardObjectId = c.env.BoardDurableObject.idFromString(gameId);
     const stub = c.env.BoardDurableObject.get(boardObjectId);

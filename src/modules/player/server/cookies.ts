@@ -6,8 +6,7 @@ import { getPlayerSchema } from "./validation";
 
 const PLAYER_COOKIE_KEY = "sdo_player";
 
-export const getPlayerCookie = (c: Context): Player | null => {
-  const cookie = getCookie(c, PLAYER_COOKIE_KEY);
+const parsePlayerCookie = (cookie?: string | null): Player | null => {
   if (!cookie) {
     return null;
   }
@@ -19,6 +18,16 @@ export const getPlayerCookie = (c: Context): Player | null => {
   } catch {
     return null;
   }
+};
+
+export const getPlayerCookieFromRequest = (request: Request): Player | null => {
+  const cookie = request.headers.get(PLAYER_COOKIE_KEY);
+  return parsePlayerCookie(cookie);
+};
+
+export const getPlayerCookie = (c: Context): Player | null => {
+  const cookie = getCookie(c, PLAYER_COOKIE_KEY);
+  return parsePlayerCookie(cookie);
 };
 
 export const setPlayerCookie = (c: Context, player: Player) => {
