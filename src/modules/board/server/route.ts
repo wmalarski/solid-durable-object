@@ -1,8 +1,14 @@
 import { vValidator } from "@hono/valibot-validator";
 import { Hono } from "hono";
+import { nanoid } from "nanoid";
 import * as v from "valibot";
-import { getPlayerCookie } from "~/modules/player/server/cookies";
+import {
+  getPlayerCookie,
+  setPlayerCookie,
+} from "~/modules/player/server/cookies";
+import type { Player } from "~/modules/player/server/types";
 import type { HonoContext } from "~/modules/shared/hono-types";
+import { getJoinSchema } from "./validation";
 
 const gameIdSchema = v.object({
   gameId: v.pipe(v.string(), v.length(64), v.nonEmpty()),
@@ -24,4 +30,17 @@ export const boardApi = new Hono<HonoContext>()
   .get("/config/:gameId", vValidator("param", gameIdSchema), async (c) => {
     const player = getPlayerCookie(c);
     return c.json({ player });
+  })
+  .post("/join", vValidator("json", getJoinSchema()), async (c) => {
+    const json = c.req.valid("json");
+    const player: Player = { ...json, id: nanoid() };
+
+    setPlayerCookie(c, player);
+
+    const boardObjectId = c.env.BoardDurableObject.newUniqueId();
+    const newGameId = boardObjectId.toString();
+
+    console.log("[join]", { newGameId, player });
+
+    return c.json({ gameId: newGameId });
   });

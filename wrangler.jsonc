@@ -14,8 +14,7 @@
   "compatibility_flags": ["nodejs_compat"],
   "durable_objects": {
     "bindings": [
-      { "class_name": "BoardDurableObject", "name": "BoardDurableObject" },
-      { "class_name": "LobbyDurableObject", "name": "LobbyDurableObject" }
+      { "class_name": "BoardDurableObject", "name": "BoardDurableObject" }
     ]
   },
   "main": "./src/api/route.ts",

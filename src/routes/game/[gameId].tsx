@@ -1,6 +1,6 @@
 import type { RouteDefinition } from "@solidjs/router";
 import { lazy, Show } from "solid-js";
-import { getBoardConfigQuery } from "~/modules/board/utils/services";
+import { getBoardConfigQuery } from "~/modules/board/server/services";
 import { createIsMounted } from "~/utils/create-is-mounted";
 
 const GameBoard = lazy(() =>

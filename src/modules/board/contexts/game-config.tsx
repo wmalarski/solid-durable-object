@@ -11,7 +11,7 @@ import {
 import {
   type GetBoardConfigReturn,
   getBoardConfigQuery,
-} from "../utils/services";
+} from "../server/services";
 
 const createGameConfig = (
   gameId: string,
