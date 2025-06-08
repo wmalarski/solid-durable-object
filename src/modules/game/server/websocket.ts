@@ -11,7 +11,7 @@ const PRESENCE_TOPIC = "presence";
 
 type WebsocketTopic = typeof PRESENCE_TOPIC;
 
-const getBoardId = (request: Request) => {
+const getGameId = (request: Request) => {
   const slices = request.url.split("/");
   const last = slices[slices.length - 1];
   return last;
@@ -26,8 +26,8 @@ const publishPresenceMessage = (
 };
 
 export const ws = crossws({
-  bindingName: "BoardDurableObject",
-  getNamespace: getBoardId,
+  bindingName: "GameDurableObject",
+  getNamespace: getGameId,
   hooks: {
     close(peer, _details) {
       console.log("close-peer.context", peer.context);

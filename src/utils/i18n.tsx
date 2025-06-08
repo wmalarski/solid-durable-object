@@ -10,9 +10,6 @@ import {
 } from "solid-js";
 
 const enDict = {
-  board: {
-    loading: "loading",
-  },
   common: {
     closeDialog: "Close dialog",
   },
@@ -21,6 +18,9 @@ const enDict = {
     home: "Home",
     reload: "Reload",
     title: "Game error",
+  },
+  game: {
+    loading: "loading",
   },
   homepage: {
     enterGame: "Enter Game",

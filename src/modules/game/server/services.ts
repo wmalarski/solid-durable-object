@@ -4,7 +4,7 @@ import * as v from "valibot";
 import { parseFormValidationError } from "~/utils/forms";
 import { makeHonoClient } from "~/utils/hono-client";
 import { paths } from "~/utils/paths";
-import { getJoinSchema } from "../../board/server/validation";
+import { getJoinSchema } from "./validation";
 
 export const joinLobbyAction = action(async (form: FormData) => {
   const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
@@ -15,30 +15,30 @@ export const joinLobbyAction = action(async (form: FormData) => {
 
   const honoClient = makeHonoClient();
 
-  const response = await honoClient.api.board.join
+  const response = await honoClient.api.game.join
     .$post({ json: parsed.output })
     .then((response) => response.json());
 
   throw redirect(paths.game(response.gameId));
 }, "joinLobbyAction");
 
-type GetBoardConfigQueryArgs = {
+type GetGameConfigQueryArgs = {
   gameId: string;
 };
 
-export const getBoardConfigQuery = query(
-  async ({ gameId }: GetBoardConfigQueryArgs) => {
+export const getGameConfigQuery = query(
+  async ({ gameId }: GetGameConfigQueryArgs) => {
     const honoClient = makeHonoClient();
 
-    const result = await honoClient.api.board.config[":gameId"]
+    const result = await honoClient.api.game.config[":gameId"]
       .$get({ param: { gameId } })
       .then((response) => response.json());
 
     return result;
   },
-  "getBoardConfig",
+  "getGameConfigQuery",
 );
 
-export type GetBoardConfigReturn = Awaited<
-  ReturnType<typeof getBoardConfigQuery>
+export type GetGameConfigReturn = Awaited<
+  ReturnType<typeof getGameConfigQuery>
 >;

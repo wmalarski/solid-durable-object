@@ -9,15 +9,12 @@ import {
   useContext,
 } from "solid-js";
 import {
-  type GetBoardConfigReturn,
-  getBoardConfigQuery,
+  type GetGameConfigReturn,
+  getGameConfigQuery,
 } from "../server/services";
 
-const createGameConfig = (
-  gameId: string,
-  boardConfig?: GetBoardConfigReturn,
-) => {
-  return { boardConfig, gameId };
+const createGameConfig = (gameId: string, config?: GetGameConfigReturn) => {
+  return { config, gameId };
 };
 
 export type GameConfig = ReturnType<typeof createGameConfig>;
@@ -29,12 +26,12 @@ const GameConfigContext = createContext<Accessor<GameConfig>>(() => {
 export const GameConfigProvider: Component<ParentProps> = (props) => {
   const params = useParams();
 
-  const boardConfig = createAsync(() =>
-    getBoardConfigQuery({ gameId: params.gameId }),
+  const config = createAsync(() =>
+    getGameConfigQuery({ gameId: params.gameId }),
   );
 
   return (
-    <Show fallback={<span>Fallback</span>} when={boardConfig()}>
+    <Show fallback={<span>Fallback</span>} when={config()}>
       {(config) => {
         const value = createMemo(() =>
           createGameConfig(params.gameId, config()),

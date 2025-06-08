@@ -1,21 +1,21 @@
 import type { RouteDefinition } from "@solidjs/router";
 import { lazy, Show } from "solid-js";
-import { getBoardConfigQuery } from "~/modules/board/server/services";
+import { getGameConfigQuery } from "~/modules/game/server/services";
 import { createIsMounted } from "~/utils/create-is-mounted";
 
 const GameBoard = lazy(() =>
-  import("~/modules/board/components/game-board").then((module) => ({
+  import("~/modules/game/components/game-board").then((module) => ({
     default: module.GameBoard,
   })),
 );
 
 export const route = {
   load: async ({ params }) => {
-    await getBoardConfigQuery({ gameId: params.gameId });
+    await getGameConfigQuery({ gameId: params.gameId });
   },
 } satisfies RouteDefinition;
 
-export default function BoardRoute() {
+export default function GameRoute() {
   const isMounted = createIsMounted();
 
   return (

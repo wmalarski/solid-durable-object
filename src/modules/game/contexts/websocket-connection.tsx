@@ -11,11 +11,11 @@ import { type GameConfig, useGameConfig } from "./game-config";
 
 const hrefToWs = (location: Location, gameId: string) => {
   const host = import.meta.env.DEV ? "localhost:8787" : location.host;
-  return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/board/ws/${gameId}`;
+  return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/game/ws/${gameId}`;
 };
 
 const createWebsocketConnectionContext = (config: GameConfig) => {
-  return config.boardConfig?.player
+  return config.config?.player
     ? createWS(hrefToWs(location, config.gameId))
     : null;
 };

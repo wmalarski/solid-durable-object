@@ -2,7 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import type { PlayerPosition } from "./types";
 import { ws } from "./websocket";
 
-export class BoardDurableObject extends DurableObject<Env> {
+export class GameDurableObject extends DurableObject<Env> {
   // state: DurableObjectState;
 
   positions: Map<string, PlayerPosition>;

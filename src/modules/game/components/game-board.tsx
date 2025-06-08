@@ -1,5 +1,5 @@
 import { type Component, createSignal, Show } from "solid-js";
-import { JoinDialog } from "~/modules/board/join/join-dialog";
+import { JoinDialog } from "~/modules/game/join/join-dialog";
 import { GameConfigProvider, useGameConfig } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
 import { WebsocketConnectionProvider } from "../contexts/websocket-connection";
@@ -30,7 +30,7 @@ export const GameBoard: Component = () => {
 const JoinDialogFallback: Component = () => {
   const gameConfig = useGameConfig();
   return (
-    <Show when={gameConfig().boardConfig?.player}>
+    <Show when={gameConfig().config?.player}>
       <JoinDialog />
     </Show>
   );

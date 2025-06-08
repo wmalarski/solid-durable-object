@@ -14,13 +14,11 @@
   "compatibility_flags": ["nodejs_compat"],
   "durable_objects": {
     "bindings": [
-      { "class_name": "BoardDurableObject", "name": "BoardDurableObject" }
+      { "class_name": "GameDurableObject", "name": "GameDurableObject" }
     ]
   },
   "main": "./src/api/route.ts",
-  "migrations": [
-    { "new_classes": ["BoardDurableObject", "LobbyDurableObject"], "tag": "v1" }
-  ],
+  "migrations": [{ "new_classes": ["GameDurableObject"], "tag": "v1" }],
   "name": "solid-durable-object",
   "observability": {
     "enabled": true
