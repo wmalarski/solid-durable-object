@@ -6,7 +6,7 @@ import { makeHonoClient } from "~/utils/hono-client";
 import { paths } from "~/utils/paths";
 import { getJoinSchema } from "./validation";
 
-export const joinLobbyAction = action(async (form: FormData) => {
+export const joinGameAction = action(async (form: FormData) => {
   const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
 
   if (!parsed.success) {
@@ -19,8 +19,10 @@ export const joinLobbyAction = action(async (form: FormData) => {
     .$post({ json: parsed.output })
     .then((response) => response.json());
 
-  throw redirect(paths.game(response.gameId));
-}, "joinLobbyAction");
+  throw redirect(paths.game(response.gameId), {
+    revalidate: getGameConfigQuery.key,
+  });
+}, "joinGameAction");
 
 type GetGameConfigQueryArgs = {
   gameId: string;

@@ -44,8 +44,3 @@ export type PlayerPosition = {
   angle: number;
   path: Point2D[];
 };
-
-export type LobbyData = {
-  id: DurableObjectId;
-  userIps: string[];
-};

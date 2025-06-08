@@ -33,6 +33,8 @@ export const ws = crossws({
       console.log("close-peer.context", peer.context);
     },
     message(peer, message) {
+      peer;
+
       const json = message.json<WebsocketChatSendMessage>();
 
       console.log("[message]", { json, peer, player: peer.context });

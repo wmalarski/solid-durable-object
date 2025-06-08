@@ -12,7 +12,7 @@ import {
 } from "~/ui/dialog/dialog";
 import { useI18n } from "~/utils/i18n";
 import { useActionOnSubmit } from "~/utils/use-action-on-submit";
-import { joinLobbyAction } from "../server/services";
+import { joinGameAction } from "../server/services";
 import { JoinFields } from "./join-fields";
 
 export const JoinDialog: Component = () => {
@@ -21,10 +21,10 @@ export const JoinDialog: Component = () => {
   const dialogId = "join-dialog";
   const formId = "join-form";
 
-  const submission = useSubmission(joinLobbyAction);
+  const submission = useSubmission(joinGameAction);
 
   const onSubmit = useActionOnSubmit({
-    action: joinLobbyAction,
+    action: joinGameAction,
     onSuccess: () => closeDialog(dialogId),
     resetOnSuccess: true,
   });
