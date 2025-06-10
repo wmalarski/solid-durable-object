@@ -13,49 +13,46 @@ const gameIdSchema = v.object({
   gameId: v.pipe(v.string(), v.length(64), v.nonEmpty()),
 });
 
+const upgradeWebsocketHandler = defineEventHandler(async (event) => {
+  const params = await useValidatedParams(event, gameIdSchema);
+
+  if (event.headers.get("upgrade") !== "websocket") {
+    throw createError({
+      message: "Expected Upgrade: websocket",
+      status: 426,
+    });
+  }
+
+  const gameId = params.gameId;
+  const gameObjectId = event.context.GameDurableObject.idFromString(gameId);
+  const stub = event.context.GameDurableObject.get(gameObjectId);
+
+  return stub.fetch(event.node.req);
+});
+
+const getGameConfigHandler = defineEventHandler((event) => {
+  const player = getPlayerCookie(event);
+  return { player };
+});
+
+const joinGameHandler = defineEventHandler(async (event) => {
+  const json = await useValidatedBody(event, getJoinSchema());
+  const player: Player = { ...json, id: nanoid() };
+
+  setPlayerCookie(event, player);
+
+  const gameObjectId = event.context.env.GameDurableObject.newUniqueId();
+  const newGameId = gameObjectId.toString();
+
+  console.log("[join]", { newGameId, player });
+
+  return { gameId: newGameId };
+});
+
 export const gameRouter = createRouter()
-  .get(
-    "/ws/:gameId",
-    defineEventHandler(async (event) => {
-      const params = await useValidatedParams(event, gameIdSchema);
-
-      if (event.headers.get("upgrade") !== "websocket") {
-        throw createError({
-          message: "Expected Upgrade: websocket",
-          status: 426,
-        });
-      }
-
-      const gameId = params.gameId;
-      const gameObjectId = event.context.GameDurableObject.idFromString(gameId);
-      const stub = event.context.GameDurableObject.get(gameObjectId);
-
-      return stub.fetch(event.node.req);
-    }),
-  )
-  .get(
-    "/config/:gameId",
-    defineEventHandler((event) => {
-      const player = getPlayerCookie(event);
-      return { player };
-    }),
-  )
-  .post(
-    "/join",
-    defineEventHandler(async (event) => {
-      const json = await useValidatedBody(event, getJoinSchema());
-      const player: Player = { ...json, id: nanoid() };
-
-      setPlayerCookie(event, player);
-
-      const gameObjectId = event.context.env.GameDurableObject.newUniqueId();
-      const newGameId = gameObjectId.toString();
-
-      console.log("[join]", { newGameId, player });
-
-      return { gameId: newGameId };
-    }),
-  );
+  .get("/ws/:gameId", upgradeWebsocketHandler)
+  .get("/config/:gameId", getGameConfigHandler)
+  .post("/join", joinGameHandler);
 
 // export const gameRoute = new Hono<HonoContext>()
 //   .get("/ws/:gameId", vValidator("param", gameIdSchema), async (c) => {
