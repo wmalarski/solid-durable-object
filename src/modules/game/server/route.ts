@@ -33,23 +33,29 @@ export const gameRouter = createRouter()
       return stub.fetch(event.node.req);
     }),
   )
-  .get("/config/:gameId", (event) => {
-    const player = getPlayerCookie(event);
-    return { player };
-  })
-  .post("/join", async (event) => {
-    const json = await useValidatedBody(event, getJoinSchema());
-    const player: Player = { ...json, id: nanoid() };
+  .get(
+    "/config/:gameId",
+    defineEventHandler((event) => {
+      const player = getPlayerCookie(event);
+      return { player };
+    }),
+  )
+  .post(
+    "/join",
+    defineEventHandler(async (event) => {
+      const json = await useValidatedBody(event, getJoinSchema());
+      const player: Player = { ...json, id: nanoid() };
 
-    setPlayerCookie(event, player);
+      setPlayerCookie(event, player);
 
-    const gameObjectId = event.context.env.GameDurableObject.newUniqueId();
-    const newGameId = gameObjectId.toString();
+      const gameObjectId = event.context.env.GameDurableObject.newUniqueId();
+      const newGameId = gameObjectId.toString();
 
-    console.log("[join]", { newGameId, player });
+      console.log("[join]", { newGameId, player });
 
-    return { gameId: newGameId };
-  });
+      return { gameId: newGameId };
+    }),
+  );
 
 // export const gameRoute = new Hono<HonoContext>()
 //   .get("/ws/:gameId", vValidator("param", gameIdSchema), async (c) => {
