@@ -32,7 +32,7 @@ export const JoinDialog: Component = () => {
   const issues = submission.result?.success ? undefined : submission.result;
 
   return (
-    <Dialog id={dialogId}>
+    <Dialog id={dialogId} open>
       <DialogBox>
         <DialogTitle>{t("join.join")}</DialogTitle>
         <form id={formId} onSubmit={onSubmit}>

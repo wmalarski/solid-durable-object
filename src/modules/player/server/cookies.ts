@@ -1,19 +1,24 @@
 import type { Context } from "hono";
 import { getCookie, setCookie } from "hono/cookie";
 import * as v from "valibot";
+import { parseCookies } from "vinxi/http";
 import type { Player } from "./types";
 import { getPlayerSchema } from "./validation";
 
 const PLAYER_COOKIE_KEY = "sdo_player";
 
 const parsePlayerCookie = (cookie?: string | null): Player | null => {
+  console.log("[parsePlayerCookie]", { cookie });
   if (!cookie) {
     return null;
   }
 
   try {
+    console.log("[parsePlayerCookie]", { cookie });
     const parsedJson = JSON.parse(cookie);
+    console.log("[parsePlayerCookie]", { parsedJson });
     const parsedPlayer = v.parse(getPlayerSchema(), parsedJson);
+    console.log("[parsePlayerCookie]", { parsedPlayer });
     return parsedPlayer;
   } catch {
     return null;
@@ -21,7 +26,8 @@ const parsePlayerCookie = (cookie?: string | null): Player | null => {
 };
 
 export const getPlayerCookieFromRequest = (request: Request): Player | null => {
-  const cookie = request.headers.get(PLAYER_COOKIE_KEY);
+  const cookie = request.headers.get("Cookie");
+  parseCookies();
   return parsePlayerCookie(cookie);
 };
 

@@ -2,6 +2,7 @@ import type { AdapterInternal, Peer } from "crossws";
 import crossws from "crossws/adapters/cloudflare";
 import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
 import type { Player } from "~/modules/player/server/types";
+import type { GameDurableObject } from "./game-durable-object";
 import type {
   WebsocketChatSendMessage,
   WebsocketChatServerMessage,
@@ -25,58 +26,65 @@ const publishPresenceMessage = (
   peer.publish(topic, message);
 };
 
-export const ws = crossws({
-  bindingName: "GameDurableObject",
-  getNamespace: getGameId,
-  hooks: {
-    close(peer, _details) {
-      console.log("close-peer.context", peer.context);
-    },
-    message(peer, message) {
-      peer;
+export const getWs = (game: GameDurableObject) => {
+  const gameId = game.state.id.toString();
+  return crossws({
+    bindingName: "GameDurableObject",
+    getNamespace: () => gameId,
+    hooks: {
+      close(peer, _details) {
+        console.log("close-peer.context", peer.context);
+      },
+      message(peer, message) {
+        peer;
 
-      const json = message.json<WebsocketChatSendMessage>();
+        const json = message.json<WebsocketChatSendMessage>();
 
-      console.log("[message]", { json, peer, player: peer.context });
+        console.log("[message]", { game, json, peer, player: peer.context });
 
-      peer.publish(PRESENCE_TOPIC, { message: json.content, user: peer.id });
-    },
-    open(peer) {
-      // peer.context
+        peer.publish(PRESENCE_TOPIC, { message: json.content, user: peer.id });
+      },
+      open(peer) {
+        // peer.context
 
-      // console.log(
-      //   "open-peer.context",
-      //   peer,
-      //   peer.namespace,
-      //   peer.peers,
-      //   peer.id,
-      //   peer.request,
-      // );
+        // console.log(
+        //   "open-peer.context",
+        //   peer,
+        //   peer.namespace,
+        //   peer.peers,
+        //   peer.id,
+        //   peer.request,
+        // );
 
-      peer.subscribe(PRESENCE_TOPIC);
+        peer.subscribe(PRESENCE_TOPIC);
 
-      const player = peer.context.player as Player;
+        const player = peer.context.player as Player;
 
-      console.log("[open]", { player });
+        console.log("[open]", { player });
 
-      if (player) {
-        publishPresenceMessage(peer, PRESENCE_TOPIC, {
-          color: player.color,
-          kind: "join",
-          name: player.name,
-          playerId: player.id,
+        if (player) {
+          publishPresenceMessage(peer, PRESENCE_TOPIC, {
+            color: player.color,
+            kind: "join",
+            name: player.name,
+            playerId: player.id,
+          });
+        }
+
+        peer.publish(PRESENCE_TOPIC, {
+          message: `${peer} joined!`,
+          user: "server",
         });
-      }
-
-      peer.publish(PRESENCE_TOPIC, {
-        message: `${peer} joined!`,
-        user: "server",
-      });
+      },
+      upgrade(request) {
+        const player = getPlayerCookieFromRequest(request);
+        console.log("[upgrade]", {
+          cookie: Object.fromEntries(request.headers.entries()),
+          player,
+        });
+        return { ...request, context: { player } };
+      },
     },
-    upgrade(request) {
-      const player = getPlayerCookieFromRequest(request);
-      console.log("[upgrade]", { player });
-      return { ...request, context: { player } };
-    },
-  },
-});
+    instanceName: gameId,
+  });
+};

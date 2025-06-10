@@ -1,4 +1,4 @@
-import { type Component, createSignal, Show } from "solid-js";
+import { type Component, createEffect, createSignal, Show } from "solid-js";
 import { JoinDialog } from "~/modules/game/join/join-dialog";
 import { GameConfigProvider, useGameConfig } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
@@ -29,8 +29,13 @@ export const GameBoard: Component = () => {
 
 const JoinDialogFallback: Component = () => {
   const gameConfig = useGameConfig();
+
+  createEffect(() => {
+    console.log("gameConfig().config?.player", gameConfig().config?.player);
+  });
+
   return (
-    <Show when={gameConfig().config?.player}>
+    <Show when={!gameConfig().config?.player}>
       <JoinDialog />
     </Show>
   );
