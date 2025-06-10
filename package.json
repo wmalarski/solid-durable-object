@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@hono/valibot-validator": "^0.5.2",
     "@solid-primitives/event-listener": "^2.4.1",
     "@solid-primitives/i18n": "2.2.1",
     "@solid-primitives/keyboard": "^1.3.1",
@@ -8,10 +7,10 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.1.4",
-    "cookie-es": "^2.0.0",
     "crossws": "^0.4.1",
     "decode-formdata": "^0.9.0",
-    "hono": "^4.7.11",
+    "h3": "^1.15.3",
+    "h3-valibot": "^0.0.9",
     "nanoid": "^5.1.5",
     "pixi.js": "8.10.1",
     "solid-js": "^1.9.7",
@@ -23,7 +22,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.0.0-beta.6",
     "@cloudflare/workers-types": "^4.20250610.0",
-    "@hono/vite-dev-server": "^0.19.1",
     "@tailwindcss/vite": "^4.1.8",
     "@types/node": "^24.0.0",
     "daisyui": "5.0.43",

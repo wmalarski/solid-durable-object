@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@hono/valibot-validator':
-        specifier: ^0.5.2
-        version: 0.5.2(hono@4.7.11)(valibot@1.1.0(typescript@5.8.3))
       '@solid-primitives/event-listener':
         specifier: ^2.4.1
         version: 2.4.1(solid-js@1.9.7)
@@ -32,18 +29,18 @@ importers:
       '@solidjs/start':
         specifier: ^1.1.4
         version: 1.1.4(@types/node@24.0.0)(jiti@2.4.2)(lightningcss@1.30.1)(solid-js@1.9.7)(terser@5.39.2)(vinxi@0.5.7(@types/node@24.0.0)(db0@0.3.2)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2))(vite@6.3.5(@types/node@24.0.0)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2))
-      cookie-es:
-        specifier: ^2.0.0
-        version: 2.0.0
       crossws:
         specifier: ^0.4.1
         version: 0.4.1
       decode-formdata:
         specifier: ^0.9.0
         version: 0.9.0
-      hono:
-        specifier: ^4.7.11
-        version: 4.7.11
+      h3:
+        specifier: ^1.15.3
+        version: 1.15.3
+      h3-valibot:
+        specifier: ^0.0.9
+        version: 0.0.9(valibot@1.1.0(typescript@5.8.3))
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
@@ -72,9 +69,6 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^4.20250610.0
         version: 4.20250610.0
-      '@hono/vite-dev-server':
-        specifier: ^0.19.1
-        version: 0.19.1(hono@4.7.11)(miniflare@4.20250525.1)(wrangler@4.19.1(@cloudflare/workers-types@4.20250610.0))
       '@tailwindcss/vite':
         specifier: ^4.1.8
         version: 4.1.8(vite@6.3.5(@types/node@24.0.0)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2))
@@ -637,31 +631,6 @@ packages:
 
   '@fastify/busboy@3.1.1':
     resolution: {integrity: sha512-5DGmA8FTdB2XbDeEwc/5ZXBl6UbBAyBOOLlPuBnZ/N1SwdH9Ii+cOX3tBROlDgcTXxjOYnLMVoKk9+FXAw0CJw==}
-
-  '@hono/node-server@1.14.3':
-    resolution: {integrity: sha512-KuDMwwghtFYSmIpr4WrKs1VpelTrptvJ+6x6mbUcZnFcc213cumTF5BdqfHyW93B19TNI4Vaev14vOI2a0Ie3w==}
-    engines: {node: '>=18.14.1'}
-    peerDependencies:
-      hono: ^4
-
-  '@hono/valibot-validator@0.5.2':
-    resolution: {integrity: sha512-WbTr8PCFNAME0ale62rmmq+E8bGp5a7VPiVNmNT+Ue12GJE3Ax+CWBGtHhR0TzAEiloPvJND3IbjHIgtNtsqhw==}
-    peerDependencies:
-      hono: '>=3.9.0'
-      valibot: ^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc
-
-  '@hono/vite-dev-server@0.19.1':
-    resolution: {integrity: sha512-hh+0u3IxHErEyj4YwHk/U+2f+qAHEQZ9EIQtadG9jeHfxEXH6r/ZecjnpyEkQbDK7JtgEEoVAq/JGOkd3Dvqww==}
-    engines: {node: '>=18.14.1'}
-    peerDependencies:
-      hono: '*'
-      miniflare: '*'
-      wrangler: '*'
-    peerDependenciesMeta:
-      miniflare:
-        optional: true
-      wrangler:
-        optional: true
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -2479,6 +2448,18 @@ packages:
     resolution: {integrity: sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  h3-valibot@0.0.9:
+    resolution: {integrity: sha512-JGueCa0s4EeOMrDjnJ/IoEKLXyYzXtv4+VH/V7xo6IkStOR9HrKTikGd/QvmOfy4azsOjahCrqwryDI9eC8CZg==}
+    peerDependencies:
+      '@nuxt/kit': '>=3'
+      '@nuxt/schema': '>=3'
+      valibot: '>=0.42.0 || >=1'
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      '@nuxt/schema':
+        optional: true
+
   h3@1.15.3:
     resolution: {integrity: sha512-z6GknHqyX0h9aQaTx22VZDf6QyZn+0Nh+Ym8O/u0SGSkyF5cuTJYKlc8MkzW3Nzf9LE1ivcpmYC3FUGpywhuUQ==}
 
@@ -2503,10 +2484,6 @@ packages:
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
-
-  hono@4.7.11:
-    resolution: {integrity: sha512-rv0JMwC0KALbbmwJDEnxvQCeJh+xbS3KEWW5PC9cMJ08Ur9xgatI0HmtgYZfOdOSOeYsp5LO2cOhdI8cLEbDEQ==}
-    engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
@@ -4582,24 +4559,6 @@ snapshots:
 
   '@fastify/busboy@3.1.1': {}
 
-  '@hono/node-server@1.14.3(hono@4.7.11)':
-    dependencies:
-      hono: 4.7.11
-
-  '@hono/valibot-validator@0.5.2(hono@4.7.11)(valibot@1.1.0(typescript@5.8.3))':
-    dependencies:
-      hono: 4.7.11
-      valibot: 1.1.0(typescript@5.8.3)
-
-  '@hono/vite-dev-server@0.19.1(hono@4.7.11)(miniflare@4.20250525.1)(wrangler@4.19.1(@cloudflare/workers-types@4.20250610.0))':
-    dependencies:
-      '@hono/node-server': 1.14.3(hono@4.7.11)
-      hono: 4.7.11
-      minimatch: 9.0.5
-    optionalDependencies:
-      miniflare: 4.20250525.1
-      wrangler: 4.19.1(@cloudflare/workers-types@4.20250610.0)
-
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
       '@img/sharp-libvips-darwin-arm64': 1.0.4
@@ -6485,6 +6444,11 @@ snapshots:
     dependencies:
       duplexer: 0.1.2
 
+  h3-valibot@0.0.9(valibot@1.1.0(typescript@5.8.3)):
+    dependencies:
+      h3: 1.15.3
+      valibot: 1.1.0(typescript@5.8.3)
+
   h3@1.15.3:
     dependencies:
       cookie-es: 1.2.2
@@ -6524,8 +6488,6 @@ snapshots:
       '@types/hast': 3.0.4
 
   he@1.2.0: {}
-
-  hono@4.7.11: {}
 
   hookable@5.5.3: {}
 

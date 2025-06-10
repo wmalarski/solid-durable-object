@@ -1,5 +1,4 @@
-import type { Context } from "hono";
-import { getCookie, setCookie } from "hono/cookie";
+import { getCookie, type H3Event, setCookie } from "h3";
 import * as v from "valibot";
 import { parseCookies } from "vinxi/http";
 import type { Player } from "./types";
@@ -31,15 +30,15 @@ export const getPlayerCookieFromRequest = (request: Request): Player | null => {
   return parsePlayerCookie(cookie);
 };
 
-export const getPlayerCookie = (c: Context): Player | null => {
-  const cookie = getCookie(c, PLAYER_COOKIE_KEY);
+export const getPlayerCookie = (event: H3Event): Player | null => {
+  const cookie = getCookie(event, PLAYER_COOKIE_KEY);
   return parsePlayerCookie(cookie);
 };
 
-export const setPlayerCookie = (c: Context, player: Player) => {
-  setCookie(c, PLAYER_COOKIE_KEY, JSON.stringify(player), {
+export const setPlayerCookie = (event: H3Event, player: Player) => {
+  setCookie(event, PLAYER_COOKIE_KEY, JSON.stringify(player), {
     httpOnly: true,
     maxAge: 1_000_000,
-    sameSite: "Lax",
+    sameSite: "lax",
   });
 };
