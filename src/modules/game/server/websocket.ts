@@ -26,11 +26,11 @@ const publishPresenceMessage = (
   peer.publish(topic, message);
 };
 
-export const getWs = (game: GameDurableObject) => {
-  const gameId = game.state.id.toString();
+export const getWs = (game?: GameDurableObject) => {
+  // const gameId = game.state.id.toString();
   return crossws({
     bindingName: "GameDurableObject",
-    getNamespace: () => gameId,
+    getNamespace: (request) => getGameId(request),
     hooks: {
       close(peer, _details) {
         console.log("close-peer.context", peer.context);
@@ -60,7 +60,7 @@ export const getWs = (game: GameDurableObject) => {
 
         const player = peer.context.player as Player;
 
-        console.log("[open]", { player });
+        console.log("[open]", { peer, player });
 
         if (player) {
           publishPresenceMessage(peer, PRESENCE_TOPIC, {
@@ -81,10 +81,13 @@ export const getWs = (game: GameDurableObject) => {
         console.log("[upgrade]", {
           cookie: Object.fromEntries(request.headers.entries()),
           player,
+          request,
         });
         return { ...request, context: { player } };
       },
     },
-    instanceName: gameId,
+    // instanceName: gameId,
   });
 };
+
+export const ws = getWs();

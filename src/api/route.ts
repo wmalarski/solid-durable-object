@@ -1,12 +1,12 @@
 import {
   createApp,
-  createError,
   createRouter,
   defineEventHandler,
   toWebHandler,
   useBase,
 } from "h3";
-import { gameRouter } from "~/modules/game/server/route";
+import { gameRouter } from "~/modules/game/server/game-router";
+import { getWebRequest } from "~/utils/h3-helpers";
 
 export const app = createApp();
 
@@ -14,15 +14,9 @@ const router = createRouter()
   .use("/api/game/**", useBase("/api/game/", gameRouter.handler))
   .get(
     "**",
-    defineEventHandler((event) => {
-      const request = event.web?.request;
-
-      if (!request) {
-        throw createError({ message: "Invalid request", status: 400 });
-      }
-
-      return event.context.cloudflare.env.ASSETS.fetch(request);
-    }),
+    defineEventHandler((event) =>
+      event.context.cloudflare.env.ASSETS.fetch(getWebRequest(event)),
+    ),
   );
 
 app.use(router);

@@ -8,12 +8,10 @@ import {
   Show,
   useContext,
 } from "solid-js";
-import {
-  type GetGameConfigReturn,
-  getGameConfigQuery,
-} from "../server/services";
+import type { GetGameConfigResult } from "../server/game-router";
+import { getGameConfigQuery } from "../server/services";
 
-const createGameConfig = (gameId: string, config?: GetGameConfigReturn) => {
+const createGameConfig = (gameId: string, config?: GetGameConfigResult) => {
   return { config, gameId };
 };
 

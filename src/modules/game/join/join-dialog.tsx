@@ -12,6 +12,7 @@ import {
 } from "~/ui/dialog/dialog";
 import { useI18n } from "~/utils/i18n";
 import { useActionOnSubmit } from "~/utils/use-action-on-submit";
+import { useGameConfig } from "../contexts/game-config";
 import { joinGameAction } from "../server/services";
 import { JoinFields } from "./join-fields";
 
@@ -20,6 +21,8 @@ export const JoinDialog: Component = () => {
 
   const dialogId = "join-dialog";
   const formId = "join-form";
+
+  const gameConfig = useGameConfig();
 
   const submission = useSubmission(joinGameAction);
 
@@ -36,6 +39,7 @@ export const JoinDialog: Component = () => {
       <DialogBox>
         <DialogTitle>{t("join.join")}</DialogTitle>
         <form id={formId} onSubmit={onSubmit}>
+          <input name="gameId" type="hidden" value={gameConfig().gameId} />
           <JoinFields issues={issues} pending={submission.pending} />
         </form>
         <DialogActions>

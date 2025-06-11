@@ -1,19 +1,18 @@
 import { DurableObject } from "cloudflare:workers";
 import type { CloudflareDurableAdapter } from "crossws/adapters/cloudflare";
-import type { PlayerPosition } from "./types";
-import { getWs } from "./websocket";
+import { ws } from "./websocket";
 
 export class GameDurableObject extends DurableObject<Env> {
   state: DurableObjectState;
-  positions: Map<string, PlayerPosition>;
+  // positions: Map<string, PlayerPosition>;
   ws: CloudflareDurableAdapter;
 
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
 
     this.state = state;
-    this.positions = new Map();
-    this.ws = getWs(this);
+    // this.positions = new Map();
+    this.ws = ws;
 
     this.ws.handleDurableInit(this, state, env);
   }

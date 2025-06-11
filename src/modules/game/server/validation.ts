@@ -1,10 +1,8 @@
 import * as v from "valibot";
 
-export const getJoinSchema = () => {
+export const getGameIdSchema = () => {
   return v.object({
-    color: v.pipe(v.string(), v.hexColor()),
-    id: v.pipe(v.string()),
-    name: v.pipe(v.string(), v.nonEmpty()),
+    gameId: v.pipe(v.string(), v.length(64), v.nonEmpty()),
   });
 };
 
@@ -13,4 +11,8 @@ export const getCreateSchema = () => {
     color: v.pipe(v.string(), v.hexColor()),
     name: v.pipe(v.string(), v.nonEmpty()),
   });
+};
+
+export const getJoinSchema = () => {
+  return v.intersect([getCreateSchema(), getGameIdSchema()]);
 };

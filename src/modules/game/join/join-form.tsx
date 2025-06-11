@@ -3,17 +3,17 @@ import type { Component } from "solid-js";
 import { Button } from "~/ui/button/button";
 import { formContainerRecipe } from "~/ui/form-container/form-container.recipe";
 import { useI18n } from "~/utils/i18n";
-import { joinGameAction } from "../server/services";
+import { createGameAction } from "../server/services";
 import { JoinFields } from "./join-fields";
 
 export const JoinForm: Component = () => {
   const { t } = useI18n();
 
-  const submission = useSubmission(joinGameAction);
+  const submission = useSubmission(createGameAction);
 
   return (
     <form
-      action={joinGameAction}
+      action={createGameAction}
       class={formContainerRecipe({ maxW: "md" })}
       method="post"
     >
