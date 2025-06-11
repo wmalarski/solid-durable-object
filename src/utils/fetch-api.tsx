@@ -17,23 +17,34 @@ export const getApiHref = () => {
 type FetchApiArgs = {
   path: string;
   query?: Record<string, unknown>;
+  options?: RequestInit;
 };
 
 export const fetchApi = async <T = unknown>({
   path,
   query,
+  options,
 }: FetchApiArgs): Promise<T> => {
   const params = makeSearchParams(query);
 
-  const url = new URL(`${path}?${params}`, getApiHref());
+  const url = new URL(`/api/${path}?${params}`, getApiHref());
 
-  const response = await fetch(url);
+  const response = await fetch(url, options);
 
   if (!response.ok) {
     // eslint-disable-next-line no-console
-    console.error(url);
+    console.error("[error]", url);
     throw new Error(response.statusText);
   }
 
-  return response.json();
+  try {
+    const json = await response.json<T>();
+    return json;
+  } catch (error) {
+    console.error("[error]", { error, path, url });
+    console.log("-----");
+    console.log(response.body);
+    console.log("=====");
+    throw new Error("invalid");
+  }
 };

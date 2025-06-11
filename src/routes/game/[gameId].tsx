@@ -11,6 +11,7 @@ const GameBoard = lazy(() =>
 
 export const route = {
   load: async ({ params }) => {
+    console.log("[load]", params.gameId);
     await getGameConfigQuery({ gameId: params.gameId });
   },
 } satisfies RouteDefinition;

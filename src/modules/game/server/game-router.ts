@@ -1,5 +1,9 @@
 import { createError, createRouter, defineEventHandler } from "h3";
-import { useValidatedBody, useValidatedParams } from "h3-valibot";
+import {
+  useSafeValidatedBody,
+  useValidatedBody,
+  useValidatedParams,
+} from "h3-valibot";
 import { nanoid } from "nanoid";
 import {
   getPlayerCookie,
@@ -7,7 +11,7 @@ import {
 } from "~/modules/player/server/cookies";
 import type { Player } from "~/modules/player/server/types";
 import { getWebRequest, type InferEventResult } from "~/utils/h3-helpers";
-import { getGameIdSchema, getJoinSchema } from "./validation";
+import { getCreateSchema, getGameIdSchema } from "./validation";
 
 const upgradeWebsocketHandler = defineEventHandler(async (event) => {
   const params = await useValidatedParams(event, getGameIdSchema());
@@ -36,7 +40,7 @@ export type GetGameConfigResult = InferEventResult<typeof getGameConfigHandler>;
 
 const joinGameHandler = defineEventHandler(async (event) => {
   const params = await useValidatedParams(event, getGameIdSchema());
-  const body = await useValidatedBody(event, getJoinSchema());
+  const body = await useValidatedBody(event, getCreateSchema());
   const player: Player = { ...body, id: nanoid() };
 
   const gameDurableObject = event.context.cloudflare.env.GameDurableObject;
@@ -57,12 +61,25 @@ const joinGameHandler = defineEventHandler(async (event) => {
 export type JoinGameResult = InferEventResult<typeof joinGameHandler>;
 
 const createGameHandler = defineEventHandler(async (event) => {
-  const json = await useValidatedBody(event, getJoinSchema());
-  const player: Player = { ...json, id: nanoid() };
+  console.log("[createGameHandler]");
+
+  const json = await useSafeValidatedBody(event, getCreateSchema());
+
+  console.log("[createGameHandler]", json);
+
+  if (!json.success) {
+    throw createError({});
+  }
+
+  const player: Player = { ...json.output, id: nanoid() };
+
+  console.log("[createGameHandler]", player);
 
   const gameDurableObject = event.context.cloudflare.env.GameDurableObject;
   const gameObjectId = gameDurableObject.newUniqueId();
   const newGameId = gameObjectId.toString();
+
+  console.log("[createGameHandler]", { gameObjectId, newGameId });
 
   setPlayerCookie(event, player);
 
@@ -74,5 +91,5 @@ export type CreateGameResult = InferEventResult<typeof createGameHandler>;
 export const gameRouter = createRouter()
   .get("/:gameId/ws", upgradeWebsocketHandler)
   .get("/:gameId/config", getGameConfigHandler)
-  .post(":gameId/join", joinGameHandler)
+  .post("/:gameId/join", joinGameHandler)
   .post("/create", createGameHandler);

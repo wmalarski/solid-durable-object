@@ -3,6 +3,7 @@ import {
   type Accessor,
   type Component,
   createContext,
+  createEffect,
   createMemo,
   type ParentProps,
   Show,
@@ -23,6 +24,10 @@ const GameConfigContext = createContext<Accessor<GameConfig>>(() => {
 
 export const GameConfigProvider: Component<ParentProps> = (props) => {
   const params = useParams();
+
+  createEffect(() => {
+    console.log("[GameConfigProvider]", params.gameId);
+  });
 
   const config = createAsync(() =>
     getGameConfigQuery({ gameId: params.gameId }),

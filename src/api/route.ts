@@ -10,8 +10,13 @@ import { getWebRequest } from "~/utils/h3-helpers";
 
 export const app = createApp();
 
+const apiRouter = createRouter().use(
+  "/game/**",
+  useBase("/game", gameRouter.handler),
+);
+
 const router = createRouter()
-  .use("/api/game/**", useBase("/api/game/", gameRouter.handler))
+  .use("/api/**", useBase("/api", apiRouter.handler))
   .get(
     "**",
     defineEventHandler((event) =>

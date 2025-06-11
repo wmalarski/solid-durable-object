@@ -36,8 +36,6 @@ export const getWs = (game?: GameDurableObject) => {
         console.log("close-peer.context", peer.context);
       },
       message(peer, message) {
-        peer;
-
         const json = message.json<WebsocketChatSendMessage>();
 
         console.log("[message]", { game, json, peer, player: peer.context });

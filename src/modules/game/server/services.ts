@@ -9,7 +9,7 @@ import type {
   GetGameConfigResult,
   JoinGameResult,
 } from "./game-router";
-import { getJoinSchema } from "./validation";
+import { getCreateSchema, getJoinSchema } from "./validation";
 
 export const joinGameAction = action(async (form: FormData) => {
   const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
@@ -18,24 +18,36 @@ export const joinGameAction = action(async (form: FormData) => {
     return parseFormValidationError(parsed.issues);
   }
 
-  const path = `/game/${parsed.output.gameId}/join`;
-  await fetchApi<JoinGameResult>({ path });
+  const gameId = parsed.output.gameId;
+  await fetchApi<JoinGameResult>({
+    options: { body: JSON.stringify(parsed.output), method: "post" },
+    path: `/game/${gameId}/join`,
+  });
 
-  throw revalidate(getGameConfigQuery.key);
+  throw revalidate(getGameConfigQuery.keyFor({ gameId }));
 }, "joinGameAction");
 
 export const createGameAction = action(async (form: FormData) => {
-  const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
+  const parsed = await v.safeParseAsync(getCreateSchema(), decode(form));
 
   if (!parsed.success) {
     return parseFormValidationError(parsed.issues);
   }
 
   const path = "/game/create";
-  const response = await fetchApi<CreateGameResult>({ path });
 
-  throw redirect(paths.game(response.gameId), {
-    revalidate: getGameConfigQuery.key,
+  console.log("[createGameAction]", { parsed, path });
+
+  const response = await fetchApi<CreateGameResult>({
+    options: { body: JSON.stringify(parsed.output), method: "post" },
+    path: "/game/create",
+  });
+  const gameId = response.gameId;
+
+  console.log("[createGameAction]", gameId);
+
+  throw redirect(paths.game(gameId), {
+    revalidate: getGameConfigQuery.keyFor({ gameId }),
   });
 }, "createGameAction");
 
@@ -46,6 +58,7 @@ type GetGameConfigQueryArgs = {
 export const getGameConfigQuery = query(
   async ({ gameId }: GetGameConfigQueryArgs) => {
     const path = `/game/${gameId}/config`;
+    console.log("[getGameConfigQuery]", { gameId, path });
     return fetchApi<GetGameConfigResult>({ path });
   },
   "getGameConfigQuery",
