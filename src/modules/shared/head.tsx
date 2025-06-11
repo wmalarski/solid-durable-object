@@ -1,6 +1,6 @@
 import { Meta, Title } from "@solidjs/meta";
 import { type Component, createMemo } from "solid-js";
-import { createIsomorphicUrl } from "~/utils/create-isomorphic-url";
+import { createIsomorphicUrl } from "~/modules/shared/create-isomorphic-url";
 import { useI18n } from "../../utils/i18n";
 
 type HeadProps = {

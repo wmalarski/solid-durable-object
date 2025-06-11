@@ -1,3 +1,5 @@
+import { type Action, useAction } from "@solidjs/router";
+import type { ComponentProps } from "solid-js";
 import type * as v from "valibot";
 
 export type FormIssues = {
@@ -57,4 +59,33 @@ export const getInvalidStateProps = ({
     "aria-describedby": errorMessageId,
     "aria-invalid": true,
   };
+};
+
+type UseActionOnSubmitArgs = {
+  onSuccess: () => void;
+  resetOnSuccess?: boolean;
+  action: Action<[form: FormData], FormResult, [form: FormData]>;
+};
+
+export const useActionOnSubmit = (args: UseActionOnSubmitArgs) => {
+  const action = useAction(args.action);
+
+  const onSubmit: ComponentProps<"form">["onSubmit"] = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const result = await action(formData);
+
+    if (!result?.success) {
+      return;
+    }
+
+    args.onSuccess();
+
+    if (args.resetOnSuccess) {
+      event.currentTarget.reset();
+    }
+  };
+
+  return onSubmit;
 };

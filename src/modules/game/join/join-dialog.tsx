@@ -10,8 +10,8 @@ import {
   DialogClose,
   DialogTitle,
 } from "~/ui/dialog/dialog";
+import { useActionOnSubmit } from "~/utils/forms";
 import { useI18n } from "~/utils/i18n";
-import { useActionOnSubmit } from "~/utils/use-action-on-submit";
 import { useGameConfig } from "../contexts/game-config";
 import { joinGameAction } from "../server/services";
 import { JoinFields } from "./join-fields";

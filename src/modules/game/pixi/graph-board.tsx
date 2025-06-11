@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import { createPreventMenu } from "~/utils/create-prevent-menu";
+import { createPreventMenu } from "~/modules/game/components/create-prevent-menu";
 
 export const GraphBoard: Component = () => {
   createPreventMenu();
