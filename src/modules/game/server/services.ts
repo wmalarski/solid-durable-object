@@ -4,6 +4,7 @@ import * as v from "valibot";
 import { fetchApi } from "~/utils/fetch-api";
 import { parseFormValidationError } from "~/utils/forms";
 import { paths } from "~/utils/paths";
+import type { GetGameConfigResult, JoinGameResult } from "./route";
 import { getJoinSchema } from "./validation";
 
 export const joinGameAction = action(async (form: FormData) => {
@@ -13,7 +14,7 @@ export const joinGameAction = action(async (form: FormData) => {
     return parseFormValidationError(parsed.issues);
   }
 
-  const response = await fetchApi({
+  const response = await fetchApi<JoinGameResult>({
     path: "/game/join",
   });
 
@@ -28,7 +29,7 @@ type GetGameConfigQueryArgs = {
 
 export const getGameConfigQuery = query(
   async ({ gameId }: GetGameConfigQueryArgs) => {
-    const result = await fetchApi({
+    const result = await fetchApi<GetGameConfigResult>({
       path: `/game/config/${gameId}`,
     });
 

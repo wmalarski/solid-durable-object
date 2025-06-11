@@ -7,6 +7,7 @@ import {
   setPlayerCookie,
 } from "~/modules/player/server/cookies";
 import type { Player } from "~/modules/player/server/types";
+import type { InferEventResult } from "~/utils/h3-types";
 import { getJoinSchema } from "./validation";
 
 const gameIdSchema = v.object({
@@ -35,6 +36,8 @@ const getGameConfigHandler = defineEventHandler((event) => {
   return { player };
 });
 
+export type GetGameConfigResult = InferEventResult<typeof getGameConfigHandler>;
+
 const joinGameHandler = defineEventHandler(async (event) => {
   const json = await useValidatedBody(event, getJoinSchema());
   const player: Player = { ...json, id: nanoid() };
@@ -48,6 +51,8 @@ const joinGameHandler = defineEventHandler(async (event) => {
 
   return { gameId: newGameId };
 });
+
+export type JoinGameResult = InferEventResult<typeof joinGameHandler>;
 
 export const gameRouter = createRouter()
   .get("/ws/:gameId", upgradeWebsocketHandler)
