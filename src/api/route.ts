@@ -1,31 +1,33 @@
-import { createApp, createRouter, defineEventHandler, toWebHandler } from "h3";
+import {
+  createApp,
+  createError,
+  createRouter,
+  defineEventHandler,
+  toWebHandler,
+  useBase,
+} from "h3";
+import { gameRouter } from "~/modules/game/server/route";
 
 export const app = createApp();
 
-const router = createRouter();
+const router = createRouter()
+  .use("/api/game/**", useBase("/api/game/", gameRouter.handler))
+  .get(
+    "**",
+    defineEventHandler((event) => {
+      const request = event.web?.request;
+
+      if (!request) {
+        throw createError({ message: "Invalid request", status: 400 });
+      }
+
+      return event.context.cloudflare.env.ASSETS.fetch(request);
+    }),
+  );
+
 app.use(router);
 
-router.get(
-  "*",
-  defineEventHandler((event) => {
-    console.log("event", event);
-    return { message: "⚡️ Tadaa!" };
-  }),
-);
-
-// type HonoContext = {
-//   Bindings: Env;
-// };
-
-// const api = new Hono<HonoContext>().route("/game", gameRoute);
-
-// const appHono = new Hono<HonoContext>()
-//   .route("/api", api)
-//   .get("*", async (c) => c.env.ASSETS.fetch(c.req.raw));
-
 export { GameDurableObject } from "../modules/game/server/game-durable-object";
-
-// export default appHono;
 
 const handler = toWebHandler(app);
 

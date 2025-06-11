@@ -5,10 +5,26 @@ import { fetchApi } from "~/utils/fetch-api";
 import { parseFormValidationError } from "~/utils/forms";
 import { paths } from "~/utils/paths";
 import type { GetGameConfigResult, JoinGameResult } from "./route";
-import { getJoinSchema } from "./validation";
+import { getCreateSchema, getJoinSchema } from "./validation";
 
 export const joinGameAction = action(async (form: FormData) => {
   const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
+
+  if (!parsed.success) {
+    return parseFormValidationError(parsed.issues);
+  }
+
+  const response = await fetchApi<JoinGameResult>({
+    path: `/game/${parsed.output.id}/join`,
+  });
+
+  throw redirect(paths.game(response.gameId), {
+    revalidate: getGameConfigQuery.key,
+  });
+}, "joinGameAction");
+
+export const createGameAction = action(async (form: FormData) => {
+  const parsed = await v.safeParseAsync(getCreateSchema(), decode(form));
 
   if (!parsed.success) {
     return parseFormValidationError(parsed.issues);
@@ -21,7 +37,7 @@ export const joinGameAction = action(async (form: FormData) => {
   throw redirect(paths.game(response.gameId), {
     revalidate: getGameConfigQuery.key,
   });
-}, "joinGameAction");
+}, "createGameAction");
 
 type GetGameConfigQueryArgs = {
   gameId: string;

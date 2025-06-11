@@ -54,10 +54,27 @@ const joinGameHandler = defineEventHandler(async (event) => {
 
 export type JoinGameResult = InferEventResult<typeof joinGameHandler>;
 
+const createGameHandler = defineEventHandler(async (event) => {
+  const json = await useValidatedBody(event, getJoinSchema());
+  const player: Player = { ...json, id: nanoid() };
+
+  setPlayerCookie(event, player);
+
+  const gameObjectId = event.context.env.GameDurableObject.newUniqueId();
+  const newGameId = gameObjectId.toString();
+
+  console.log("[join]", { newGameId, player });
+
+  return { gameId: newGameId };
+});
+
+export type CreateGameResult = InferEventResult<typeof createGameHandler>;
+
 export const gameRouter = createRouter()
-  .get("/ws/:gameId", upgradeWebsocketHandler)
-  .get("/config/:gameId", getGameConfigHandler)
-  .post("/join", joinGameHandler);
+  .get("/:gameId/ws", upgradeWebsocketHandler)
+  .get("/:gameId/config", getGameConfigHandler)
+  .post(":gameId/join", joinGameHandler)
+  .post("/create", createGameHandler);
 
 // export const gameRoute = new Hono<HonoContext>()
 //   .get("/ws/:gameId", vValidator("param", gameIdSchema), async (c) => {
