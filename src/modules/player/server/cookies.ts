@@ -12,11 +12,8 @@ const parsePlayerCookie = (cookie?: string | null): Player | null => {
   }
 
   try {
-    console.log("[parsePlayerCookie]", cookie);
     const parsedJson = JSON.parse(cookie);
-    console.log("[parsePlayerCookie]", parsedJson);
     const parsedPlayer = v.parse(getPlayerSchema(), parsedJson);
-    console.log("[parsePlayerCookie]", parsedPlayer);
     return parsedPlayer;
   } catch {
     return null;
@@ -30,9 +27,7 @@ export const getPlayerCookieFromRequest = (request: Request): Player | null => {
 };
 
 export const getPlayerCookie = (event: H3Event): Player | null => {
-  console.log("[getPlayerCookie]", event.headers);
   const cookie = getCookie(event, PLAYER_COOKIE_KEY);
-  console.log("[getPlayerCookie]", cookie);
   return parsePlayerCookie(cookie);
 };
 

@@ -1,4 +1,9 @@
-import { createError, createRouter, defineEventHandler } from "h3";
+import {
+  createError,
+  createRouter,
+  defineEventHandler,
+  type H3Event,
+} from "h3";
 import {
   useSafeValidatedBody,
   useValidatedBody,
@@ -13,7 +18,7 @@ import type { Player } from "~/modules/player/server/types";
 import { getWebRequest, type InferEventResult } from "~/utils/h3-helpers";
 import { getCreateSchema, getGameIdSchema, getJoinSchema } from "./validation";
 
-const upgradeWebsocketHandler = defineEventHandler(async (event) => {
+const upgradeWebsocketHandler = async (event: H3Event) => {
   const params = await useValidatedParams(event, getGameIdSchema());
 
   if (event.headers.get("upgrade") !== "websocket") {
@@ -28,8 +33,12 @@ const upgradeWebsocketHandler = defineEventHandler(async (event) => {
   const stub = gameDurableObject.get(gameObjectId);
   const request = getWebRequest(event);
 
-  return stub.fetch(request);
-});
+  const response = await stub.fetch(request);
+
+  console.log("[upgradeWebsocketHandler]", response);
+
+  return response;
+};
 
 const getGameConfigHandler = defineEventHandler((event) => {
   const player = getPlayerCookie(event);

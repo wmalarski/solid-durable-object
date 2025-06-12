@@ -1,20 +1,19 @@
 import { DurableObject } from "cloudflare:workers";
-import type { CloudflareDurableAdapter } from "crossws/adapters/cloudflare";
 import { ws } from "./websocket";
 
 export class GameDurableObject extends DurableObject<Env> {
-  state: DurableObjectState;
+  // state: DurableObjectState;
   // positions: Map<string, PlayerPosition>;
-  ws: CloudflareDurableAdapter;
+  // ws: CloudflareDurableAdapter;
 
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
 
-    this.state = state;
+    // this.state = state;
     // this.positions = new Map();
-    this.ws = ws;
+    // this.ws = ws;
 
-    this.ws.handleDurableInit(this, state, env);
+    ws.handleDurableInit(this, state, env);
   }
 
   async fetch(request: Request) {
@@ -36,16 +35,20 @@ export class GameDurableObject extends DurableObject<Env> {
     // Now we return the other end of the pair to the client.
     // return new Response(null, { status: 101, webSocket: pair[0] });
 
-    return this.ws.handleDurableUpgrade(this, request);
+    const response = await ws.handleDurableUpgrade(this, request);
+
+    console.log("[GameDurableObject]", response);
+
+    return response;
   }
 
   webSocketMessage(client: WebSocket, message: string) {
-    return this.ws.handleDurableMessage(this, client, message);
+    return ws.handleDurableMessage(this, client, message);
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: ws type
   webSocketPublish(topic: string, message: unknown, opts: any) {
-    return this.ws.handleDurablePublish(this, topic, message, opts);
+    return ws.handleDurablePublish(this, topic, message, opts);
   }
 
   webSocketClose(
@@ -59,7 +62,7 @@ export class GameDurableObject extends DurableObject<Env> {
 
     // lobbyObject.leave(this.ctx.id.toString(), client.);
 
-    return this.ws.handleDurableClose(this, client, code, reason, wasClean);
+    return ws.handleDurableClose(this, client, code, reason, wasClean);
   }
 }
 

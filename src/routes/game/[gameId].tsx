@@ -1,5 +1,6 @@
 import type { RouteDefinition } from "@solidjs/router";
 import { lazy, Show } from "solid-js";
+import { isServer } from "solid-js/web";
 import { getGameConfigQuery } from "~/modules/game/server/services";
 import { createIsMounted } from "~/utils/create-is-mounted";
 
@@ -11,8 +12,9 @@ const GameBoard = lazy(() =>
 
 export const route = {
   load: async ({ params }) => {
-    console.log("[load]", params.gameId);
-    await getGameConfigQuery({ gameId: params.gameId });
+    if (!isServer) {
+      await getGameConfigQuery({ gameId: params.gameId });
+    }
   },
 } satisfies RouteDefinition;
 

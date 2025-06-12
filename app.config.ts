@@ -5,10 +5,9 @@ export default defineConfig({
   server: {
     devProxy: { "/api": { target: "http://localhost:8787/api" } },
     preset: "static",
+    static: true,
   },
-  solid: {
-    ssr: false,
-  },
+  solid: {},
   vite: {
     plugins: [tailwindcss()],
   },

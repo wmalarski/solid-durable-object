@@ -1,12 +1,7 @@
 import type { AdapterInternal, Peer } from "crossws";
 import crossws from "crossws/adapters/cloudflare";
-import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
-import type { Player } from "~/modules/player/server/types";
 import type { GameDurableObject } from "./game-durable-object";
-import type {
-  WebsocketChatSendMessage,
-  WebsocketChatServerMessage,
-} from "./types";
+import type { WebsocketChatServerMessage } from "./types";
 
 const PRESENCE_TOPIC = "presence";
 
@@ -30,17 +25,15 @@ export const getWs = (game?: GameDurableObject) => {
   // const gameId = game.state.id.toString();
   return crossws({
     bindingName: "GameDurableObject",
-    getNamespace: (request) => getGameId(request),
+    // getNamespace: (request) => getGameId(request),
     hooks: {
       close(peer, _details) {
-        console.log("close-peer.context", peer.context);
+        // console.log("close-peer.context", peer.context);
       },
       message(peer, message) {
-        const json = message.json<WebsocketChatSendMessage>();
-
-        console.log("[message]", { game, json, peer, player: peer.context });
-
-        peer.publish(PRESENCE_TOPIC, { message: json.content, user: peer.id });
+        // const json = message.json<WebsocketChatSendMessage>();
+        // console.log("[message]", { game, json, peer, player: peer.context });
+        // peer.publish(PRESENCE_TOPIC, { message: json.content, user: peer.id });
       },
       open(peer) {
         // peer.context
@@ -56,28 +49,29 @@ export const getWs = (game?: GameDurableObject) => {
 
         peer.subscribe(PRESENCE_TOPIC);
 
-        const player = peer.context.player as Player;
+        const context = peer.context;
 
-        console.log("[open]", { peer, player });
+        console.log("[open]", { context, peer });
 
-        if (player) {
-          publishPresenceMessage(peer, PRESENCE_TOPIC, {
-            color: player.color,
-            kind: "join",
-            name: player.name,
-            playerId: player.id,
-          });
-        }
+        // if (player) {
+        //   publishPresenceMessage(peer, PRESENCE_TOPIC, {
+        //     color: player.color,
+        //     kind: "join",
+        //     name: player.name,
+        //     playerId: player.id,
+        //   });
+        // }
 
-        peer.publish(PRESENCE_TOPIC, {
-          message: `${peer} joined!`,
-          user: "server",
-        });
+        // peer.publish(PRESENCE_TOPIC, {
+        //   message: `${peer} joined!`,
+        //   user: "server",
+        // });
       },
-      upgrade(request) {
-        const player = getPlayerCookieFromRequest(request);
-        return { ...request, context: { player } };
-      },
+      // upgrade(request) {
+      //   const player = getPlayerCookieFromRequest(request);
+      //   console.log("[upgrade]", player);
+      //   return { ...request, context: { player } };
+      // },
     },
     // instanceName: gameId,
   });
