@@ -31,7 +31,7 @@ const JoinDialogFallback: Component = () => {
   const gameConfig = useGameConfig();
 
   createEffect(() => {
-    console.log("gameConfig().config?.player", gameConfig().config?.player);
+    console.log("[JoinDialogFallback]", gameConfig());
   });
 
   return (

@@ -76,11 +76,6 @@ export const getWs = (game?: GameDurableObject) => {
       },
       upgrade(request) {
         const player = getPlayerCookieFromRequest(request);
-        console.log("[upgrade]", {
-          cookie: Object.fromEntries(request.headers.entries()),
-          player,
-          request,
-        });
         return { ...request, context: { player } };
       },
     },

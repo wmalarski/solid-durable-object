@@ -1,3 +1,4 @@
+import { parse } from "cookie-es";
 import { getCookie, type H3Event, setCookie } from "h3";
 import * as v from "valibot";
 import type { Player } from "./types";
@@ -6,17 +7,16 @@ import { getPlayerSchema } from "./validation";
 const PLAYER_COOKIE_KEY = "sdo_player";
 
 const parsePlayerCookie = (cookie?: string | null): Player | null => {
-  console.log("[parsePlayerCookie]", { cookie });
   if (!cookie) {
     return null;
   }
 
   try {
-    console.log("[parsePlayerCookie]", { cookie });
+    console.log("[parsePlayerCookie]", cookie);
     const parsedJson = JSON.parse(cookie);
-    console.log("[parsePlayerCookie]", { parsedJson });
+    console.log("[parsePlayerCookie]", parsedJson);
     const parsedPlayer = v.parse(getPlayerSchema(), parsedJson);
-    console.log("[parsePlayerCookie]", { parsedPlayer });
+    console.log("[parsePlayerCookie]", parsedPlayer);
     return parsedPlayer;
   } catch {
     return null;
@@ -25,11 +25,14 @@ const parsePlayerCookie = (cookie?: string | null): Player | null => {
 
 export const getPlayerCookieFromRequest = (request: Request): Player | null => {
   const cookie = request.headers.get("Cookie");
-  return parsePlayerCookie(cookie);
+  const playerCookie = cookie ? parse(cookie)[PLAYER_COOKIE_KEY] : null;
+  return parsePlayerCookie(playerCookie);
 };
 
 export const getPlayerCookie = (event: H3Event): Player | null => {
+  console.log("[getPlayerCookie]", event.headers);
   const cookie = getCookie(event, PLAYER_COOKIE_KEY);
+  console.log("[getPlayerCookie]", cookie);
   return parsePlayerCookie(cookie);
 };
 

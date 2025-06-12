@@ -12,7 +12,8 @@ import type {
 import { getCreateSchema, getJoinSchema } from "./validation";
 
 const FORM_HEADERS = {
-  "Content-Type": "application/x-www-form-urlencoded",
+  // "Content-Type": "application/x-www-form-urlencoded",
+  "Content-Type": "application/json",
 };
 
 export const joinGameAction = action(async (form: FormData) => {
@@ -23,9 +24,14 @@ export const joinGameAction = action(async (form: FormData) => {
   }
 
   const gameId = parsed.output.gameId;
+
   await fetchApi<JoinGameResult>({
-    options: { body: form, headers: FORM_HEADERS, method: "post" },
-    path: `/game/${gameId}/join`,
+    options: {
+      body: JSON.stringify(parsed.output),
+      headers: FORM_HEADERS,
+      method: "POST",
+    },
+    path: "/game/join",
   });
 
   throw revalidate(getGameConfigQuery.keyFor({ gameId }));
@@ -38,18 +44,16 @@ export const createGameAction = action(async (form: FormData) => {
     return parseFormValidationError(parsed.issues);
   }
 
-  const path = "/game/create";
-
-  console.log("[createGameAction]", { parsed, path });
-
   const response = await fetchApi<CreateGameResult>({
-    options: { body: form, headers: FORM_HEADERS, method: "POST" },
+    options: {
+      body: JSON.stringify(parsed.output),
+      headers: FORM_HEADERS,
+      method: "POST",
+    },
     path: "/game/create",
   });
 
   const gameId = response.gameId;
-
-  console.log("[createGameAction]", gameId);
 
   throw redirect(paths.game(gameId), {
     revalidate: getGameConfigQuery.keyFor({ gameId }),

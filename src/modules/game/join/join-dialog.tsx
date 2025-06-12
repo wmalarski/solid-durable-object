@@ -7,7 +7,6 @@ import {
   DialogActions,
   DialogBackdrop,
   DialogBox,
-  DialogClose,
   DialogTitle,
 } from "~/ui/dialog/dialog";
 import { useActionOnSubmit } from "~/utils/forms";
@@ -43,7 +42,6 @@ export const JoinDialog: Component = () => {
           <JoinFields issues={issues} pending={submission.pending} />
         </form>
         <DialogActions>
-          <DialogClose />
           <Button
             color="primary"
             disabled={submission.pending}
