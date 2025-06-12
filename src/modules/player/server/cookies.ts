@@ -1,6 +1,5 @@
 import { getCookie, type H3Event, setCookie } from "h3";
 import * as v from "valibot";
-import { parseCookies } from "vinxi/http";
 import type { Player } from "./types";
 import { getPlayerSchema } from "./validation";
 
@@ -26,7 +25,6 @@ const parsePlayerCookie = (cookie?: string | null): Player | null => {
 
 export const getPlayerCookieFromRequest = (request: Request): Player | null => {
   const cookie = request.headers.get("Cookie");
-  parseCookies();
   return parsePlayerCookie(cookie);
 };
 

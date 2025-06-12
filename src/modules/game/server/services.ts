@@ -11,6 +11,10 @@ import type {
 } from "./game-router";
 import { getCreateSchema, getJoinSchema } from "./validation";
 
+const FORM_HEADERS = {
+  "Content-Type": "application/x-www-form-urlencoded",
+};
+
 export const joinGameAction = action(async (form: FormData) => {
   const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
 
@@ -20,7 +24,7 @@ export const joinGameAction = action(async (form: FormData) => {
 
   const gameId = parsed.output.gameId;
   await fetchApi<JoinGameResult>({
-    options: { body: JSON.stringify(parsed.output), method: "post" },
+    options: { body: form, headers: FORM_HEADERS, method: "post" },
     path: `/game/${gameId}/join`,
   });
 
@@ -39,9 +43,10 @@ export const createGameAction = action(async (form: FormData) => {
   console.log("[createGameAction]", { parsed, path });
 
   const response = await fetchApi<CreateGameResult>({
-    options: { body: JSON.stringify(parsed.output), method: "post" },
+    options: { body: form, headers: FORM_HEADERS, method: "POST" },
     path: "/game/create",
   });
+
   const gameId = response.gameId;
 
   console.log("[createGameAction]", gameId);
