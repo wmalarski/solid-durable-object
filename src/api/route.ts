@@ -1,3 +1,5 @@
+import type { AdapterOptions } from "crossws";
+import wsAdapter from "crossws/adapters/cloudflare";
 import {
   createApp,
   createRouter,
@@ -30,8 +32,14 @@ export { GameDurableObject } from "../modules/game/server/game-durable-object";
 
 const handler = toWebHandler(app);
 
+const crossws = wsAdapter(app.websocket as AdapterOptions);
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    if (request.headers.get("upgrade") === "websocket") {
+      console.log("[upgrade]");
+      return crossws.handleUpgrade(request, env, ctx);
+    }
     return handler(request, { cloudflare: { ctx, env } });
   },
 };
