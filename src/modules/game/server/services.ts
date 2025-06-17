@@ -1,20 +1,10 @@
 import { action, query, redirect, revalidate } from "@solidjs/router";
 import { decode } from "decode-formdata";
 import * as v from "valibot";
-import { fetchApi } from "~/utils/fetch-api";
+import { makeHonoClient } from "~/api/client";
 import { parseFormValidationError } from "~/utils/forms";
 import { paths } from "~/utils/paths";
-import type {
-  CreateGameResult,
-  GetGameConfigResult,
-  JoinGameResult,
-} from "./game-router";
 import { getCreateSchema, getJoinSchema } from "./validation";
-
-const FORM_HEADERS = {
-  // "Content-Type": "application/x-www-form-urlencoded",
-  "Content-Type": "application/json",
-};
 
 export const joinGameAction = action(async (form: FormData) => {
   const parsed = await v.safeParseAsync(getJoinSchema(), decode(form));
@@ -23,18 +13,13 @@ export const joinGameAction = action(async (form: FormData) => {
     return parseFormValidationError(parsed.issues);
   }
 
-  const gameId = parsed.output.gameId;
+  const honoClient = makeHonoClient();
 
-  await fetchApi<JoinGameResult>({
-    options: {
-      body: JSON.stringify(parsed.output),
-      headers: FORM_HEADERS,
-      method: "POST",
-    },
-    path: "/game/join",
-  });
+  const result = await honoClient.api.join
+    .$post({ json: parsed.output })
+    .then((response) => response.json());
 
-  throw revalidate(getGameConfigQuery.keyFor({ gameId }));
+  throw revalidate(getGameConfigQuery.keyFor({ gameId: result.gameId }));
 }, "joinGameAction");
 
 export const createGameAction = action(async (form: FormData) => {
@@ -44,16 +29,13 @@ export const createGameAction = action(async (form: FormData) => {
     return parseFormValidationError(parsed.issues);
   }
 
-  const response = await fetchApi<CreateGameResult>({
-    options: {
-      body: JSON.stringify(parsed.output),
-      headers: FORM_HEADERS,
-      method: "POST",
-    },
-    path: "/game/create",
-  });
+  const honoClient = makeHonoClient();
 
-  const gameId = response.gameId;
+  const result = await honoClient.api.create
+    .$post({ json: parsed.output })
+    .then((response) => response.json());
+
+  const gameId = result.gameId;
 
   throw redirect(paths.game(gameId), {
     revalidate: getGameConfigQuery.keyFor({ gameId }),
@@ -66,9 +48,17 @@ type GetGameConfigQueryArgs = {
 
 export const getGameConfigQuery = query(
   async ({ gameId }: GetGameConfigQueryArgs) => {
-    const path = `/game/${gameId}/config`;
-    console.log("[getGameConfigQuery]", { gameId, path });
-    return fetchApi<GetGameConfigResult>({ path });
+    const honoClient = makeHonoClient();
+
+    const result = await honoClient.api[":gameId"].config
+      .$get({ param: { gameId } })
+      .then((response) => response.json());
+
+    return result;
   },
   "getGameConfigQuery",
 );
+
+export type GetGameConfigResult = Awaited<
+  ReturnType<typeof getGameConfigQuery>
+>;

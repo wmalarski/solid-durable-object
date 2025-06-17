@@ -1,5 +1,6 @@
 import { parse } from "cookie-es";
-import { getCookie, type H3Event, setCookie } from "h3";
+import type { Context } from "hono";
+import { getCookie, setCookie } from "hono/cookie";
 import * as v from "valibot";
 import type { Player } from "./types";
 import { getPlayerSchema } from "./validation";
@@ -26,13 +27,13 @@ export const getPlayerCookieFromRequest = (request: Request): Player | null => {
   return parsePlayerCookie(playerCookie);
 };
 
-export const getPlayerCookie = (event: H3Event): Player | null => {
-  const cookie = getCookie(event, PLAYER_COOKIE_KEY);
+export const getPlayerCookie = (context: Context): Player | null => {
+  const cookie = getCookie(context, PLAYER_COOKIE_KEY);
   return parsePlayerCookie(cookie);
 };
 
-export const setPlayerCookie = (event: H3Event, player: Player) => {
-  setCookie(event, PLAYER_COOKIE_KEY, JSON.stringify(player), {
+export const setPlayerCookie = (context: Context, player: Player) => {
+  setCookie(context, PLAYER_COOKIE_KEY, JSON.stringify(player), {
     httpOnly: true,
     maxAge: 1_000_000,
     sameSite: "lax",
