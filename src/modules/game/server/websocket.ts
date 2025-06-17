@@ -1,6 +1,6 @@
 import type { AdapterInternal, Peer } from "crossws";
-import crossws from "crossws/adapters/cloudflare";
-import type { GameDurableObject } from "./game-durable-object";
+import crossws, { type CloudflareOptions } from "crossws/adapters/cloudflare";
+import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
 import type { WebsocketChatServerMessage } from "./types";
 
 const PRESENCE_TOPIC = "presence";
@@ -21,21 +21,21 @@ const publishPresenceMessage = (
   peer.publish(topic, message);
 };
 
-export const getWs = (game?: GameDurableObject) => {
-  // const gameId = game.state.id.toString();
-  return crossws({
-    bindingName: "GameDurableObject",
-    // getNamespace: (request) => getGameId(request),
-    hooks: {
-      close(peer, _details) {
-        // console.log("close-peer.context", peer.context);
+export const ws = crossws({
+  // getNamespace: (request) => getGameId(request),
+  resolve(request) {
+    return {
+      close(peer, details) {
+        console.log("[crossws]", { details, peer, request });
       },
       message(peer, message) {
+        console.log("[crossws]", { message, peer, request });
         // const json = message.json<WebsocketChatSendMessage>();
         // console.log("[message]", { game, json, peer, player: peer.context });
         // peer.publish(PRESENCE_TOPIC, { message: json.content, user: peer.id });
       },
       open(peer) {
+        console.log("[crossws]", { peer, request });
         // peer.context
 
         // console.log(
@@ -51,7 +51,7 @@ export const getWs = (game?: GameDurableObject) => {
 
         const context = peer.context;
 
-        console.log("[open]", { context, peer });
+        console.log("[open]", { context, peer, request });
 
         // if (player) {
         //   publishPresenceMessage(peer, PRESENCE_TOPIC, {
@@ -67,14 +67,34 @@ export const getWs = (game?: GameDurableObject) => {
         //   user: "server",
         // });
       },
-      // upgrade(request) {
-      //   const player = getPlayerCookieFromRequest(request);
-      //   console.log("[upgrade]", player);
-      //   return { ...request, context: { player } };
-      // },
-    },
-    // instanceName: gameId,
-  });
-};
+      upgrade(request) {
+        const player = getPlayerCookieFromRequest(request);
+        console.log("[upgrade]", player, request);
+        return { ...request, context: { player } };
+      },
+    };
+  },
+  resolveDurableStub(request, env) {
+    const gameId = request?.url.split("/").at(-2);
 
-export const ws = getWs();
+    console.log("[resolveDurableStub]", { gameId, request });
+
+    if (!gameId) {
+      throw new Error("gameId not defined");
+    }
+
+    const typedEnv = env as Env;
+    const binding = typedEnv.GameDurableObject;
+    const instanceId = binding.idFromString(gameId);
+    const stub = binding.get(instanceId);
+
+    console.log("[resolveDurableStub]", { gameId, instanceId, stub });
+
+    // biome-ignore lint/suspicious/noExplicitAny: needed
+    return stub as any as ResolveDurableStub;
+  },
+});
+
+type ResolveDurableStub = ReturnType<
+  NonNullable<CloudflareOptions["resolveDurableStub"]>
+>;
