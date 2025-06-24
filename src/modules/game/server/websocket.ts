@@ -1,16 +1,19 @@
 import type { AdapterInternal, Peer } from "crossws";
 import crossws, { type CloudflareOptions } from "crossws/adapters/cloudflare";
 import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
-import type { WebsocketChatServerMessage } from "./types";
+import type {
+  WebsocketChatSendMessage,
+  WebsocketChatServerMessage,
+} from "./types";
 
 const PRESENCE_TOPIC = "presence";
 
 type WebsocketTopic = typeof PRESENCE_TOPIC;
 
-const getGameId = (request: Request) => {
-  const slices = request.url.split("/");
-  const last = slices[slices.length - 1];
-  return last;
+const getGameId = (url: string) => {
+  const slices = url.split("/");
+  const gameId = slices[slices.length - 2];
+  return gameId;
 };
 
 const publishPresenceMessage = (
@@ -22,60 +25,46 @@ const publishPresenceMessage = (
 };
 
 export const ws = crossws({
-  // getNamespace: (request) => getGameId(request),
+  getNamespace: (request) => getGameId(request.url),
   resolve(request) {
+    const gameId = getGameId(request.url);
+    const player = getPlayerCookieFromRequest(request);
     return {
       close(peer, details) {
-        console.log("[crossws]", { details, peer, request });
+        console.log("[crossws]", { details, gameId, peer, player });
       },
       message(peer, message) {
-        console.log("[crossws]", { message, peer, request });
-        // const json = message.json<WebsocketChatSendMessage>();
-        // console.log("[message]", { game, json, peer, player: peer.context });
-        // peer.publish(PRESENCE_TOPIC, { message: json.content, user: peer.id });
+        console.log("[crossws]", { gameId, message, peer, player });
+        const json = message.json<WebsocketChatSendMessage>();
+        console.log("[message]", { gameId, json, peer });
+        publishPresenceMessage(peer, PRESENCE_TOPIC, {
+          kind: "update",
+          updates: [
+            {
+              angle: 1,
+              playerId: player?.id ?? peer.id,
+              point: { x: 0, y: 0 },
+            },
+          ],
+        });
       },
       open(peer) {
-        console.log("[crossws]", { peer, request });
-        // peer.context
-
-        // console.log(
-        //   "open-peer.context",
-        //   peer,
-        //   peer.namespace,
-        //   peer.peers,
-        //   peer.id,
-        //   peer.request,
-        // );
-
         peer.subscribe(PRESENCE_TOPIC);
 
-        const context = peer.context;
-
-        console.log("[open]", { context, peer, request });
-
-        // if (player) {
-        //   publishPresenceMessage(peer, PRESENCE_TOPIC, {
-        //     color: player.color,
-        //     kind: "join",
-        //     name: player.name,
-        //     playerId: player.id,
-        //   });
-        // }
-
-        // peer.publish(PRESENCE_TOPIC, {
-        //   message: `${peer} joined!`,
-        //   user: "server",
-        // });
-      },
-      upgrade(request) {
-        const player = getPlayerCookieFromRequest(request);
-        console.log("[upgrade]", player, request);
-        return { ...request, context: { player } };
+        if (player) {
+          publishPresenceMessage(peer, PRESENCE_TOPIC, {
+            color: player.color,
+            kind: "join",
+            name: player.name,
+            peerId: peer.id,
+            playerId: player.id,
+          });
+        }
       },
     };
   },
   resolveDurableStub(request, env) {
-    const gameId = request?.url.split("/").at(-2);
+    const gameId = request && getGameId(request.url);
 
     console.log("[resolveDurableStub]", { gameId, request });
 

@@ -7,7 +7,7 @@ export class GameDurableObject extends DurableObject<Env> {
     ws.handleDurableInit(this, state, env);
   }
 
-  async fetch(request: Request) {
+  fetch(request: Request) {
     return ws.handleDurableUpgrade(this, request);
   }
 

@@ -7,17 +7,18 @@ import {
   type ParentProps,
   useContext,
 } from "solid-js";
+import { makeHonoClient } from "~/api/client";
 import { type GameConfig, useGameConfig } from "./game-config";
 
-const hrefToWs = (location: Location, gameId: string) => {
-  const host = import.meta.env.DEV ? "localhost:8787" : location.host;
-  return `${location.protocol === "https:" ? "wss" : "ws"}://${host}/api/game/${gameId}/ws`;
+const hrefToWs = (gameId: string) => {
+  const route = makeHonoClient().api[":gameId"].ws.$url({ param: { gameId } });
+  const host = import.meta.env.DEV ? "localhost:8787" : route.host;
+  const result = `${route.protocol === "https:" ? "wss" : "ws"}://${host}${route.pathname}`;
+  return result;
 };
 
 const createWebsocketConnectionContext = (config: GameConfig) => {
-  return config.config?.player
-    ? createWS(hrefToWs(location, config.gameId))
-    : null;
+  return config.config?.player ? createWS(hrefToWs(config.gameId)) : null;
 };
 
 const WebsocketConnectionContext = createContext<

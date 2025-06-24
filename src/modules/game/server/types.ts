@@ -13,6 +13,7 @@ export type WebsocketChatSendMessage = {
 export type JoinWsServerMessage = {
   kind: "join";
   playerId: string;
+  peerId: string;
   name: string;
   color: string;
 };
