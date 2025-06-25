@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@hono/valibot-validator':
         specifier: ^0.5.2
-        version: 0.5.2(hono@4.8.2)(valibot@1.1.0(typescript@5.8.3))
+        version: 0.5.2(hono@4.8.3)(valibot@1.1.0(typescript@5.8.3))
       '@solid-primitives/event-listener':
         specifier: ^2.4.1
         version: 2.4.1(solid-js@1.9.7)
@@ -35,15 +35,12 @@ importers:
       cookie-es:
         specifier: ^2.0.0
         version: 2.0.0
-      crossws:
-        specifier: ^0.4.1
-        version: 0.4.1
       decode-formdata:
         specifier: ^0.9.0
         version: 0.9.0
       hono:
-        specifier: ^4.8.2
-        version: 4.8.2
+        specifier: ^4.8.3
+        version: 4.8.3
       nanoid:
         specifier: ^5.1.5
         version: 5.1.5
@@ -103,8 +100,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@24.0.4)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2))
       wrangler:
-        specifier: ^4.21.1
-        version: 4.21.1(@cloudflare/workers-types@4.20250620.0)
+        specifier: ^4.21.2
+        version: 4.21.2(@cloudflare/workers-types@4.20250620.0)
 
 packages:
 
@@ -1800,14 +1797,6 @@ packages:
   crossws@0.3.5:
     resolution: {integrity: sha512-ojKiDvcmByhwa8YYqbQI/hg7MEU0NC03+pSdEq4ZUnZR9xXpwk7E43SMNGkn+JxJGPFtNvQ48+vV2p+P1ml5PA==}
 
-  crossws@0.4.1:
-    resolution: {integrity: sha512-E7WKBcHVhAVrY6JYD5kteNqVq1GSZxqGrdSiwXR9at+XHi43HJoCQKXcCczR5LBnBquFZPsB3o7HklulKoBU5w==}
-    peerDependencies:
-      srvx: '>=0.7.1'
-    peerDependenciesMeta:
-      srvx:
-        optional: true
-
   css-select@4.3.0:
     resolution: {integrity: sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==}
 
@@ -2384,8 +2373,8 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
-  hono@4.8.2:
-    resolution: {integrity: sha512-hM+1RIn9PK1I6SiTNS6/y7O1mvg88awYLFEuEtoiMtRyT3SD2iu9pSFgbBXT3b1Ua4IwzvSTLvwO0SEhDxCi4w==}
+  hono@4.8.3:
+    resolution: {integrity: sha512-jYZ6ZtfWjzBdh8H/0CIFfCBHaFL75k+KMzaM177hrWWm2TWL39YMYaJgB74uK/niRc866NMlH9B8uCvIo284WQ==}
     engines: {node: '>=16.9.0'}
 
   hookable@5.5.3:
@@ -3942,8 +3931,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.21.1:
-    resolution: {integrity: sha512-tDszonELO8uhw3nF0ZKQnVcy9cx8zVSB9iT4v3/gsaYoARelRrytR7cfR1gj/fpPV4kEGM854md6rpxTInsyZw==}
+  wrangler@4.21.2:
+    resolution: {integrity: sha512-POC8gGIAsJIYISxVe/oWIjSNwCqfaHMcDPzo6zuGTGvqYC33UM5WI82nULse1bNpXBC0L0XpqtHysW3sDqa8DQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -4433,9 +4422,9 @@ snapshots:
 
   '@fastify/busboy@3.1.1': {}
 
-  '@hono/valibot-validator@0.5.2(hono@4.8.2)(valibot@1.1.0(typescript@5.8.3))':
+  '@hono/valibot-validator@0.5.2(hono@4.8.3)(valibot@1.1.0(typescript@5.8.3))':
     dependencies:
-      hono: 4.8.2
+      hono: 4.8.3
       valibot: 1.1.0(typescript@5.8.3)
 
   '@img/sharp-darwin-arm64@0.33.5':
@@ -5754,8 +5743,6 @@ snapshots:
     dependencies:
       uncrypto: 0.1.3
 
-  crossws@0.4.1: {}
-
   css-select@4.3.0:
     dependencies:
       boolbase: 1.0.0
@@ -6301,7 +6288,7 @@ snapshots:
 
   he@1.2.0: {}
 
-  hono@4.8.2: {}
+  hono@4.8.3: {}
 
   hookable@5.5.3: {}
 
@@ -8075,7 +8062,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250617.0
       '@cloudflare/workerd-windows-64': 1.20250617.0
 
-  wrangler@4.21.1(@cloudflare/workers-types@4.20250620.0):
+  wrangler@4.21.2(@cloudflare/workers-types@4.20250620.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.3.3(unenv@2.0.0-rc.17)(workerd@1.20250617.0)

@@ -9,9 +9,8 @@
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.1.5",
     "cookie-es": "^2.0.0",
-    "crossws": "^0.4.1",
     "decode-formdata": "^0.9.0",
-    "hono": "^4.8.2",
+    "hono": "^4.8.3",
     "nanoid": "^5.1.5",
     "pixi.js": "8.10.2",
     "solid-js": "^1.9.7",
@@ -33,7 +32,7 @@
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-solid": "^2.11.7",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.21.1"
+    "wrangler": "^4.21.2"
   },
   "engines": {
     "node": ">=22"
