@@ -1,31 +1,97 @@
 import { DurableObject } from "cloudflare:workers";
-import { ws } from "./websocket";
+import { getGameId } from "./helpers";
+
+export type WsMessage =
+  | { type: "message"; data: string }
+  | { type: "quit"; id: string }
+  | { type: "join"; id: string }
+  | { type: "move"; id: string; x: number; y: number }
+  | { type: "get-cursors" }
+  | { type: "get-cursors-response"; sessions: Session[] };
+
+export type Session = { id: string; x: number; y: number };
 
 export class GameDurableObject extends DurableObject<Env> {
+  // private playersMap: Map<string, Player>;
+  sessions: Map<WebSocket, Session>;
+
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
-    ws.handleDurableInit(this, state, env);
+    // ws.handleDurableInit(this, state, env);
+
+    // this.playersMap = new Map();
+    this.sessions = new Map();
+    this.ctx.getWebSockets().forEach((ws) => {
+      const meta = ws.deserializeAttachment();
+      this.sessions.set(ws, { ...meta });
+    });
+  }
+
+  broadcast(message: WsMessage, self?: string) {
+    this.ctx.getWebSockets().forEach((ws) => {
+      const { id } = ws.deserializeAttachment();
+      if (id !== self) ws.send(JSON.stringify(message));
+    });
   }
 
   fetch(request: Request) {
-    return ws.handleDurableUpgrade(this, request);
+    const webSocketPair = new WebSocketPair();
+    const [client, server] = Object.values(webSocketPair);
+    this.ctx.acceptWebSocket(server);
+
+    const id = getGameId(request.url);
+
+    if (!id) {
+      return new Response("Missing id", { status: 400 });
+    }
+
+    const sessionInitialData: Session = { id, x: -1, y: -1 };
+    server.serializeAttachment(sessionInitialData);
+    this.sessions.set(server, sessionInitialData);
+    this.broadcast({ id, type: "join" }, id);
+
+    return new Response(null, { status: 101, webSocket: client });
   }
 
-  webSocketMessage(client: WebSocket, message: string) {
-    return ws.handleDurableMessage(this, client, message);
+  closeSessions() {
+    this.ctx.getWebSockets().forEach((ws) => ws.close());
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: ws type
-  webSocketPublish(topic: string, message: unknown, opts: any) {
-    return ws.handleDurablePublish(this, topic, message, opts);
+  async webSocketMessage(ws: WebSocket, message: string) {
+    if (typeof message !== "string") return;
+    const parsedMsg: WsMessage = JSON.parse(message);
+    const session = this.sessions.get(ws);
+    if (!session) return;
+
+    switch (parsedMsg.type) {
+      case "move":
+        session.x = parsedMsg.x;
+        session.y = parsedMsg.y;
+        ws.serializeAttachment(session);
+        this.broadcast(parsedMsg, session.id);
+        break;
+
+      case "get-cursors": {
+        const sessions: Session[] = [];
+        this.sessions.forEach((session) => sessions.push(session));
+        const wsMessage: WsMessage = { sessions, type: "get-cursors-response" };
+        ws.send(JSON.stringify(wsMessage));
+        break;
+      }
+
+      case "message":
+        this.broadcast(parsedMsg);
+        break;
+
+      default:
+        break;
+    }
   }
 
-  webSocketClose(
-    client: WebSocket,
-    code: number,
-    reason: string,
-    wasClean: boolean,
-  ) {
-    return ws.handleDurableClose(this, client, code, reason, wasClean);
+  webSocketClose(client: WebSocket) {
+    const id = this.sessions.get(client)?.id;
+    id && this.broadcast({ id, type: "quit" });
+    this.sessions.delete(client);
+    client.close();
   }
 }
