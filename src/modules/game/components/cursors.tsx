@@ -89,6 +89,11 @@ export const Cursors: Component = () => {
     const abortController = new AbortController();
     const websocket = ws();
     const game = config();
+    const playerId = game.config?.player?.id;
+
+    if (!playerId) {
+      return;
+    }
 
     document.addEventListener(
       "mousemove",
@@ -96,11 +101,15 @@ export const Cursors: Component = () => {
         const x = ev.pageX / window.innerWidth;
         const y = ev.pageY / window.innerHeight;
         const now = Date.now();
+
         if (
           now - lastSentTimestamp() > INTERVAL &&
           websocket?.readyState === WebSocket.OPEN
         ) {
-          const message: WsMessage = { id: game.gameId, type: "move", x, y };
+          const message: WsMessage = { id: playerId, type: "move", x, y };
+
+          console.log("[message]", { message });
+
           websocket.send(JSON.stringify(message));
           setLastSentTimestamp(now);
           // highlightOut();

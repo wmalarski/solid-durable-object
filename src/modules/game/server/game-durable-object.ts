@@ -1,5 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
-import { getGameId } from "./helpers";
+import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
 
 export type WsMessage =
   | { type: "message"; data: string }
@@ -39,16 +39,16 @@ export class GameDurableObject extends DurableObject<Env> {
     const [client, server] = Object.values(webSocketPair);
     this.ctx.acceptWebSocket(server);
 
-    const id = getGameId(request.url);
+    const player = getPlayerCookieFromRequest(request);
 
-    if (!id) {
+    if (!player?.id) {
       return new Response("Missing id", { status: 400 });
     }
 
-    const sessionInitialData: Session = { id, x: -1, y: -1 };
+    const sessionInitialData: Session = { id: player.id, x: -1, y: -1 };
     server.serializeAttachment(sessionInitialData);
     this.sessions.set(server, sessionInitialData);
-    this.broadcast({ id, type: "join" }, id);
+    this.broadcast({ id: player.id, type: "join" }, player.id);
 
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -59,8 +59,14 @@ export class GameDurableObject extends DurableObject<Env> {
 
   async webSocketMessage(ws: WebSocket, message: string) {
     if (typeof message !== "string") return;
+
+    console.log("[webSocketMessage]", message);
+
     const parsedMsg: WsMessage = JSON.parse(message);
     const session = this.sessions.get(ws);
+
+    console.log("[webSocketMessage]", { parsedMsg, session });
+
     if (!session) return;
 
     switch (parsedMsg.type) {

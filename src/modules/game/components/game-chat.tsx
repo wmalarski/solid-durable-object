@@ -53,7 +53,7 @@ export const GameChat: Component = () => {
   return (
     <div class="absolute top-0 left-0">
       <div id="messages">
-        <For each={messages}>
+        <For each={messages.slice(-10, -1)}>
           {(message) => (
             <div class="c-message">
               <div>
