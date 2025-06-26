@@ -12,14 +12,11 @@ export type WsMessage =
 export type Session = { id: string; x: number; y: number };
 
 export class GameDurableObject extends DurableObject<Env> {
-  // private playersMap: Map<string, Player>;
   sessions: Map<WebSocket, Session>;
 
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
-    // ws.handleDurableInit(this, state, env);
 
-    // this.playersMap = new Map();
     this.sessions = new Map();
     this.ctx.getWebSockets().forEach((ws) => {
       const meta = ws.deserializeAttachment();
@@ -60,12 +57,8 @@ export class GameDurableObject extends DurableObject<Env> {
   async webSocketMessage(ws: WebSocket, message: string) {
     if (typeof message !== "string") return;
 
-    console.log("[webSocketMessage]", message);
-
     const parsedMsg: WsMessage = JSON.parse(message);
     const session = this.sessions.get(ws);
-
-    console.log("[webSocketMessage]", { parsedMsg, session });
 
     if (!session) return;
 
