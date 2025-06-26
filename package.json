@@ -48,6 +48,7 @@
     "cf-typegen": "wrangler types",
     "deploy": "pnpm run build && wrangler deploy",
     "dev": "vinxi dev",
+    "knip": "knip",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
     "preview": "pnpm run build && npx wrangler dev",

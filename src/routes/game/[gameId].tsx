@@ -1,6 +1,7 @@
 import type { RouteDefinition } from "@solidjs/router";
-import { lazy, Show } from "solid-js";
+import { lazy, Show, Suspense } from "solid-js";
 import { isServer } from "solid-js/web";
+import { GameLoader } from "~/modules/game/components/game-loader";
 import { getGameConfigQuery } from "~/modules/game/server/services";
 import { createIsMounted } from "~/utils/create-is-mounted";
 
@@ -23,9 +24,11 @@ export default function GameRoute() {
 
   return (
     <main>
-      <Show when={isMounted()}>
-        <GameBoard />
-      </Show>
+      <Suspense fallback={<GameLoader />}>
+        <Show when={isMounted()}>
+          <GameBoard />
+        </Show>
+      </Suspense>
     </main>
   );
 }

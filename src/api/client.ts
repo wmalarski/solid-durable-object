@@ -18,5 +18,3 @@ const hrefToApi = () => {
 export const makeHonoClient = () => {
   return hc<typeof app>(hrefToApi());
 };
-
-export type HonoClient = ReturnType<typeof makeHonoClient>;
