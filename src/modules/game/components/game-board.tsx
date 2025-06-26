@@ -4,6 +4,7 @@ import { GameConfigProvider, useGameConfig } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
 import { WebsocketConnectionProvider } from "../contexts/websocket-connection";
 import { PixiStage } from "../pixi/pixi-stage";
+import { Cursors } from "./cursors";
 import { GameChat } from "./game-chat";
 import { GameLoop } from "./game-loop";
 
@@ -20,6 +21,7 @@ export const GameBoard: Component = () => {
             {(canvas) => <PixiStage canvas={canvas()} />}
           </Show>
           <GameChat />
+          <Cursors />
           <GameLoop />
         </GameStateProvider>
       </WebsocketConnectionProvider>

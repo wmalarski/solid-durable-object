@@ -1,13 +1,10 @@
-import {
-  type Component,
-  type ComponentProps,
-  createEffect,
-  For,
-  onCleanup,
-} from "solid-js";
+import { type Component, type ComponentProps, For } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Button } from "~/ui/button/button";
-import { useWebsocketConnection } from "../contexts/websocket-connection";
+import {
+  useOnWebsocketEvent,
+  useWebsocketConnection,
+} from "../contexts/websocket-connection";
 import type {
   WebsocketChatSendMessage,
   WebsocketMessage,
@@ -39,21 +36,13 @@ export const GameChat: Component = () => {
   };
 
   // Websocket message handler & support
-  const onMessage = (event: MessageEvent<string>) => {
+
+  useOnWebsocketEvent("message", (event: MessageEvent<string>) => {
     // const { user, message } = event.data.startsWith("{")
     //   ? (JSON.parse(event.data) as WebsocketChatServerMessage)
     //   : { message: event.data, user: APPLICATION_ID };
 
     log("user", event.data);
-  };
-
-  const abortController = new AbortController();
-
-  createEffect(() => {
-    ws()?.addEventListener("message", onMessage, {
-      signal: abortController.signal,
-    });
-    onCleanup(() => abortController.abort());
   });
 
   const ping = () => {

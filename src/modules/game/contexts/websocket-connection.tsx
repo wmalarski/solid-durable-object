@@ -3,7 +3,9 @@ import {
   type Accessor,
   type Component,
   createContext,
+  createEffect,
   createMemo,
+  onCleanup,
   type ParentProps,
   useContext,
 } from "solid-js";
@@ -41,4 +43,20 @@ export const WebsocketConnectionProvider: Component<ParentProps> = (props) => {
 
 export const useWebsocketConnection = () => {
   return useContext(WebsocketConnectionContext);
+};
+
+export const useOnWebsocketEvent = <K extends keyof WebSocketEventMap>(
+  type: K,
+  listener: (this: WebSocket, event: WebSocketEventMap[K]) => void,
+) => {
+  const ws = useWebsocketConnection();
+
+  createEffect(() => {
+    const websocket = ws();
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    websocket?.addEventListener(type, listener, { signal });
+    onCleanup(() => abortController.abort());
+  });
 };
