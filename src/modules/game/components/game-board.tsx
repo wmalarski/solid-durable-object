@@ -1,11 +1,10 @@
-import { type Component, createEffect, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { JoinDialog } from "~/modules/game/join/join-dialog";
 import { GameConfigProvider, useGameConfig } from "../contexts/game-config";
 import { GameStateProvider } from "../contexts/game-state";
 import { WebsocketConnectionProvider } from "../contexts/websocket-connection";
 import { PixiStage } from "../pixi/pixi-stage";
 import { Cursors } from "./cursors";
-import { GameLoop } from "./game-loop";
 
 export const GameBoard: Component = () => {
   const [canvas, setCanvas] = createSignal<HTMLCanvasElement>();
@@ -20,7 +19,6 @@ export const GameBoard: Component = () => {
             {(canvas) => <PixiStage canvas={canvas()} />}
           </Show>
           <Cursors />
-          <GameLoop />
         </GameStateProvider>
       </WebsocketConnectionProvider>
     </GameConfigProvider>

@@ -3,15 +3,14 @@ import {
   type Accessor,
   type Component,
   createContext,
-  createEffect,
   createMemo,
   type ParentProps,
   Show,
   useContext,
 } from "solid-js";
 import {
-  type GetGameConfigResult,
   getGameConfigQuery,
+  type GetGameConfigResult,
 } from "../server/services";
 
 const createGameConfig = (gameId: string, config?: GetGameConfigResult) => {
@@ -49,4 +48,12 @@ export const GameConfigProvider: Component<ParentProps> = (props) => {
 
 export const useGameConfig = () => {
   return useContext(GameConfigContext);
+};
+
+export const usePlayer = () => {
+  const gameContext = useGameConfig();
+
+  return () => {
+    return gameContext().config?.player;
+  };
 };

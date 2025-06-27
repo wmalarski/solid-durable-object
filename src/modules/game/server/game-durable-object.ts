@@ -3,15 +3,19 @@ import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
 import type { PlayerDirection } from "../utils/types";
 
 export type WsMessage =
-  | { type: "message"; data: string }
   | { type: "quit"; id: string }
   | { type: "join"; id: string }
-  | { type: "move"; id: string; x: number; y: number }
   | { type: "get-cursors" }
   | { type: "get-cursors-response"; sessions: Session[] }
-  | { type: "change-direction"; direction: PlayerDirection };
+  | { type: "change-direction"; id: string; direction: PlayerDirection };
 
-export type Session = { id: string; x: number; y: number };
+export type Session = {
+  id: string;
+  x: number;
+  y: number;
+  direction: PlayerDirection;
+  angle: number;
+};
 
 export class GameDurableObject extends DurableObject<Env> {
   sessions: Map<WebSocket, Session>;
@@ -44,7 +48,13 @@ export class GameDurableObject extends DurableObject<Env> {
       return new Response("Missing id", { status: 400 });
     }
 
-    const sessionInitialData: Session = { id: player.id, x: -1, y: -1 };
+    const sessionInitialData: Session = {
+      angle: 0,
+      direction: "NONE",
+      id: player.id,
+      x: -1,
+      y: -1,
+    };
     server.serializeAttachment(sessionInitialData);
     this.sessions.set(server, sessionInitialData);
     this.broadcast({ id: player.id, type: "join" }, player.id);
@@ -65,12 +75,12 @@ export class GameDurableObject extends DurableObject<Env> {
     if (!session) return;
 
     switch (parsedMsg.type) {
-      case "move":
-        session.x = parsedMsg.x;
-        session.y = parsedMsg.y;
-        ws.serializeAttachment(session);
-        this.broadcast(parsedMsg, session.id);
-        break;
+      // case "move":
+      //   session.x = parsedMsg.x;
+      //   session.y = parsedMsg.y;
+      //   ws.serializeAttachment(session);
+      //   this.broadcast(parsedMsg, session.id);
+      //   break;
 
       case "get-cursors": {
         const sessions: Session[] = [];
@@ -80,9 +90,23 @@ export class GameDurableObject extends DurableObject<Env> {
         break;
       }
 
-      case "message":
-        this.broadcast(parsedMsg);
+      case "change-direction": {
+        // const untrackedDirection = direction();
+        // const { x, y } = getUpdatedPlayerPosition(state.player);
+        // const angle = getUpdatedPlayerAngle(state.player, untrackedDirection);
+
+        // state.player.position.x = x;
+        // state.player.position.y = y;
+        // state.player.angle = angle;
+
+        session.direction = parsedMsg.direction;
+        ws.serializeAttachment(session);
+
+        console.log("[parsedMsg]", { parsedMsg, session });
+
+        this.broadcast(parsedMsg, session.id);
         break;
+      }
 
       default:
         break;

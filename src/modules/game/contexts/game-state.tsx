@@ -6,16 +6,10 @@ import {
   type ParentProps,
   useContext,
 } from "solid-js";
-import { createStore, produce } from "solid-js/store";
+import { createStore } from "solid-js/store";
 import type { PlayerState, TeamArea } from "../utils/types";
-import {
-  getUpdatedPlayerAngle,
-  getUpdatedPlayerPosition,
-} from "../utils/updates";
-import {
-  createOnDirectionChange,
-  useCurrentDirection,
-} from "../utils/use-current-direction";
+import { createOnDirectionChange } from "../utils/use-current-direction";
+import { usePlayer } from "./game-config";
 import { useWebsocketSender } from "./websocket-connection";
 
 type GameStateStore = {
@@ -30,12 +24,16 @@ type CreateGameStateContextArgs = {
 const createGameStateContext = ({
   initialState,
 }: CreateGameStateContextArgs) => {
-  const direction = useCurrentDirection();
-
   const wsSender = useWebsocketSender();
 
+  const getPlayer = usePlayer();
+
   createOnDirectionChange((direction) => {
-    wsSender({ direction, type: "change-direction" });
+    const player = getPlayer();
+    if (player) {
+      console.log("[createOnDirectionChange]", { direction, player });
+      wsSender({ direction, id: player.id, type: "change-direction" });
+    }
   });
 
   const state = createMemo(() => {
@@ -43,24 +41,7 @@ const createGameStateContext = ({
     return { setStore, store };
   });
 
-  const movePlayer = () => {
-    state().setStore(
-      produce((state) => {
-        const untrackedDirection = direction();
-        const { x, y } = getUpdatedPlayerPosition(state.player);
-        const angle = getUpdatedPlayerAngle(state.player, untrackedDirection);
-
-        state.player.position.x = x;
-        state.player.position.y = y;
-        state.player.angle = angle;
-
-        console.log({ angle, x, y });
-      }),
-    );
-  };
-
   return {
-    movePlayer,
     get store() {
       return state().store;
     },

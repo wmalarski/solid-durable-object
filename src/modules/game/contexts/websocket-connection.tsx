@@ -66,7 +66,10 @@ export const useWebsocketSender = () => {
   const ws = useWebsocketConnection();
 
   const onMessage = (message: WsMessage) => {
-    ws()?.send(JSON.stringify(message));
+    const websocket = ws();
+    if (websocket?.readyState === WebSocket.OPEN) {
+      websocket.send(JSON.stringify(message));
+    }
   };
 
   return onMessage;

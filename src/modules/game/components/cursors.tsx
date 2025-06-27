@@ -1,27 +1,16 @@
-import {
-  type Component,
-  createEffect,
-  createMemo,
-  createSignal,
-} from "solid-js";
+import type { Component } from "solid-js";
 import { createStore, produce } from "solid-js/store";
 import { useGameConfig } from "../contexts/game-config";
 import {
   useOnWebsocketEvent,
-  useWebsocketConnection,
   useWebsocketSender,
 } from "../contexts/websocket-connection";
 import type { Session, WsMessage } from "../server/game-durable-object";
 
-const INTERVAL = 55;
-
 export const Cursors: Component = () => {
   const [cursors, setCursors] = createStore<Record<string, Session>>({});
 
-  const [lastSentTimestamp, setLastSentTimestamp] = createSignal(0);
-
   const config = useGameConfig();
-  const ws = useWebsocketConnection();
 
   const sendMessage = useWebsocketSender();
 
@@ -45,24 +34,48 @@ export const Cursors: Component = () => {
         setCursors(
           produce((prev) => {
             if (!(messageData.id in prev)) {
-              prev[messageData.id] = { id: messageData.id, x: -1, y: -1 };
+              prev[messageData.id] = {
+                angle: 0,
+                direction: "NONE",
+                id: messageData.id,
+                x: -1,
+                y: -1,
+              };
             }
           }),
         );
         break;
-      case "move":
+      case "change-direction": {
         setCursors(
           produce((prev) => {
             const session = prev[messageData.id];
             if (session) {
-              session.x = messageData.x;
-              session.y = messageData.y;
+              session.direction = messageData.direction;
             } else {
-              prev[messageData.id] = messageData;
+              prev[messageData.id] = {
+                angle: 0,
+                x: -1,
+                y: -1,
+                ...messageData,
+              };
             }
           }),
         );
         break;
+      }
+      // case "move":
+      //   setCursors(
+      //     produce((prev) => {
+      //       const session = prev[messageData.id];
+      //       if (session) {
+      //         session.x = messageData.x;
+      //         session.y = messageData.y;
+      //       } else {
+      //         prev[messageData.id] = messageData;
+      //       }
+      //     }),
+      //   );
+      //   break;
       case "get-cursors-response":
         setCursors(
           Object.fromEntries(
@@ -79,53 +92,16 @@ export const Cursors: Component = () => {
     setCursors({});
   });
 
-  createEffect(() => {
-    const abortController = new AbortController();
-    const websocket = ws();
-    const game = config();
-    const playerId = game.config?.player?.id;
-
-    if (!playerId) {
-      return;
-    }
-
-    document.addEventListener(
-      "mousemove",
-      (ev) => {
-        const x = ev.pageX / window.innerWidth;
-        const y = ev.pageY / window.innerHeight;
-        const now = Date.now();
-
-        if (
-          now - lastSentTimestamp() > INTERVAL &&
-          websocket?.readyState === WebSocket.OPEN
-        ) {
-          sendMessage({ id: playerId, type: "move", x, y });
-          setLastSentTimestamp(now);
-        }
-      },
-      { signal: abortController.signal },
-    );
-    return () => abortController.abort();
-  });
-
-  const otherCursors = createMemo(() => {
-    const playerId = config().config?.player?.id;
-    return Object.values(cursors).filter(
-      ({ id, x, y }) => id !== playerId && x !== -1 && y !== -1,
-    );
-  });
-
   return (
-    <>
+    <div class="absolute top-0 left-0">
       <div class="flex border">
         <div class="border-r px-2 py-1">WebSocket Connections</div>
         <div class="px-2 py-1"> {Object.entries(cursors).length} </div>
       </div>
       <div class="flex border">
         <div class="border-r px-2 py-1">Messages</div>
-        <pre>{JSON.stringify(otherCursors(), null, 2)}</pre>
+        <pre>{JSON.stringify(cursors, null, 2)}</pre>
       </div>
-    </>
+    </div>
   );
 };

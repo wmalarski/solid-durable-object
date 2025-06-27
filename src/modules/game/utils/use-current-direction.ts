@@ -1,36 +1,44 @@
 import { createEventListenerMap } from "@solid-primitives/event-listener";
-import { useCurrentlyHeldKey } from "@solid-primitives/keyboard";
-import { createMemo } from "solid-js";
+import { createSignal } from "solid-js";
 import type { PlayerDirection } from "./types";
 
-export const useCurrentDirection = () => {
-  const key = useCurrentlyHeldKey();
-  return createMemo(() => getDirectionFromKey(key()));
-};
-
-const keyDirectionMap = new Map<string, PlayerDirection>([
-  ["ARROWLEFT", "LEFT"],
-  ["ARROWRIGHT", "RIGHT"],
-]);
-
-const getDirectionFromKey = (key: string | null): PlayerDirection => {
-  return key ? (keyDirectionMap.get(key) ?? "NONE") : "NONE";
-};
+const INTERVAL = 55;
 
 export const createOnDirectionChange = (
   onDirectionChange: (direction: PlayerDirection) => void,
 ) => {
+  const [lastSentTimestamp, setLastSentTimestamp] = createSignal(0);
+  const [currentDirection, setCurrentDirection] =
+    createSignal<PlayerDirection>();
+
+  const onThrottledChange = (direction: PlayerDirection) => {
+    const now = Date.now();
+
+    if (now - lastSentTimestamp() <= INTERVAL) {
+      return;
+    }
+
+    setLastSentTimestamp(now);
+
+    if (direction === currentDirection()) {
+      return;
+    }
+
+    setCurrentDirection(direction);
+    onDirectionChange(direction);
+  };
+
   createEventListenerMap(document, {
     keydown: (event) => {
-      if (event.key === "ARROWLEFT") {
-        onDirectionChange("LEFT");
+      if (event.key === "ArrowLeft") {
+        onThrottledChange("LEFT");
       }
-      if (event.key === "ARROWRIGHR") {
-        onDirectionChange("RIGHT");
+      if (event.key === "ArrowRight") {
+        onThrottledChange("RIGHT");
       }
     },
     keyup: () => {
-      onDirectionChange("NONE");
+      onThrottledChange("NONE");
     },
   });
 };
