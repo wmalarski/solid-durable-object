@@ -75,13 +75,6 @@ export class GameDurableObject extends DurableObject<Env> {
     if (!session) return;
 
     switch (parsedMsg.type) {
-      // case "move":
-      //   session.x = parsedMsg.x;
-      //   session.y = parsedMsg.y;
-      //   ws.serializeAttachment(session);
-      //   this.broadcast(parsedMsg, session.id);
-      //   break;
-
       case "get-cursors": {
         const sessions: Session[] = [];
         this.sessions.forEach((session) => sessions.push(session));
@@ -101,8 +94,6 @@ export class GameDurableObject extends DurableObject<Env> {
 
         session.direction = parsedMsg.direction;
         ws.serializeAttachment(session);
-
-        console.log("[parsedMsg]", { parsedMsg, session });
 
         this.broadcast(parsedMsg, session.id);
         break;

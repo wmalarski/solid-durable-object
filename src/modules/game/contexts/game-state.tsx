@@ -33,7 +33,6 @@ const createGameStateContext = () => {
   createOnDirectionChange((direction) => {
     const player = getPlayer();
     if (player) {
-      console.log("[createOnDirectionChange]", { direction, player });
       wsSender({ direction, id: player.id, type: "change-direction" });
     }
   });

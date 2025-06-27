@@ -1,4 +1,5 @@
-import type { Component } from "solid-js";
+import { type Component, For } from "solid-js";
+import { useGameState } from "../contexts/game-state";
 import { BoardThemeProvider } from "./board-theme";
 import { GraphBoard } from "./graph-board";
 import { PixiAppProvider } from "./pixi-app";
@@ -9,11 +10,15 @@ type PixiStageProps = {
 };
 
 export const PixiStage: Component<PixiStageProps> = (props) => {
+  const getGameState = useGameState();
+
   return (
     <BoardThemeProvider>
       <PixiAppProvider canvas={props.canvas}>
         <GraphBoard />
-        <PlayerLine />
+        <For each={Object.keys(getGameState().store)}>
+          {(playerId) => <PlayerLine playerId={playerId} />}
+        </For>
       </PixiAppProvider>
     </BoardThemeProvider>
   );

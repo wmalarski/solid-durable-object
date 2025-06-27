@@ -3,7 +3,11 @@ import { type Component, createEffect, onCleanup } from "solid-js";
 import { useGameState } from "../contexts/game-state";
 import { usePixiContainer } from "./pixi-app";
 
-export const PlayerLine: Component = () => {
+type PlayerLineProps = {
+  playerId: string;
+};
+
+export const PlayerLine: Component<PlayerLineProps> = (props) => {
   const game = useGameState();
 
   const container = usePixiContainer();
@@ -21,9 +25,9 @@ export const PlayerLine: Component = () => {
   });
 
   createEffect(() => {
-    // const position = game().store.player;
-    // graphics.x = position.x;
-    // graphics.y = position.y;
+    const position = game().store[props.playerId];
+    graphics.x = position.x;
+    graphics.y = position.y;
   });
 
   return null;
