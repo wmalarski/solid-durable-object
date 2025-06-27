@@ -10,6 +10,7 @@ import {
   useContext,
 } from "solid-js";
 import { makeHonoClient } from "~/api/client";
+import type { WsMessage } from "../server/game-durable-object";
 import { type GameConfig, useGameConfig } from "./game-config";
 
 const hrefToWs = (gameId: string) => {
@@ -59,4 +60,14 @@ export const useOnWebsocketEvent = <K extends keyof WebSocketEventMap>(
     websocket?.addEventListener(type, listener, { signal });
     onCleanup(() => abortController.abort());
   });
+};
+
+export const useWebsocketSender = () => {
+  const ws = useWebsocketConnection();
+
+  const onMessage = (message: WsMessage) => {
+    ws()?.send(JSON.stringify(message));
+  };
+
+  return onMessage;
 };

@@ -1,5 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
+import type { PlayerDirection } from "../utils/types";
 
 export type WsMessage =
   | { type: "message"; data: string }
@@ -7,7 +8,8 @@ export type WsMessage =
   | { type: "join"; id: string }
   | { type: "move"; id: string; x: number; y: number }
   | { type: "get-cursors" }
-  | { type: "get-cursors-response"; sessions: Session[] };
+  | { type: "get-cursors-response"; sessions: Session[] }
+  | { type: "change-direction"; direction: PlayerDirection };
 
 export type Session = { id: string; x: number; y: number };
 

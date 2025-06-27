@@ -9,6 +9,7 @@ import { useGameConfig } from "../contexts/game-config";
 import {
   useOnWebsocketEvent,
   useWebsocketConnection,
+  useWebsocketSender,
 } from "../contexts/websocket-connection";
 import type { Session, WsMessage } from "../server/game-durable-object";
 
@@ -22,9 +23,10 @@ export const Cursors: Component = () => {
   const config = useGameConfig();
   const ws = useWebsocketConnection();
 
-  useOnWebsocketEvent("open", function () {
-    const message: WsMessage = { type: "get-cursors" };
-    this.send(JSON.stringify(message));
+  const sendMessage = useWebsocketSender();
+
+  useOnWebsocketEvent("open", () => {
+    sendMessage({ type: "get-cursors" });
   });
 
   useOnWebsocketEvent("message", (message) => {
@@ -98,8 +100,7 @@ export const Cursors: Component = () => {
           now - lastSentTimestamp() > INTERVAL &&
           websocket?.readyState === WebSocket.OPEN
         ) {
-          const message: WsMessage = { id: playerId, type: "move", x, y };
-          websocket.send(JSON.stringify(message));
+          sendMessage({ id: playerId, type: "move", x, y });
           setLastSentTimestamp(now);
         }
       },

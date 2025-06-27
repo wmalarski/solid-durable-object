@@ -12,7 +12,11 @@ import {
   getUpdatedPlayerAngle,
   getUpdatedPlayerPosition,
 } from "../utils/updates";
-import { useCurrentDirection } from "../utils/use-current-direction";
+import {
+  createOnDirectionChange,
+  useCurrentDirection,
+} from "../utils/use-current-direction";
+import { useWebsocketSender } from "./websocket-connection";
 
 type GameStateStore = {
   teams: TeamArea[];
@@ -27,6 +31,12 @@ const createGameStateContext = ({
   initialState,
 }: CreateGameStateContextArgs) => {
   const direction = useCurrentDirection();
+
+  const wsSender = useWebsocketSender();
+
+  createOnDirectionChange((direction) => {
+    wsSender({ direction, type: "change-direction" });
+  });
 
   const state = createMemo(() => {
     const [store, setStore] = createStore(initialState);
