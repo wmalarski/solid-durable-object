@@ -21,9 +21,9 @@ export const PlayerLine: Component = () => {
   });
 
   createEffect(() => {
-    const position = game().store.player.position;
-    graphics.x = position.x;
-    graphics.y = position.y;
+    // const position = game().store.player;
+    // graphics.x = position.x;
+    // graphics.y = position.y;
   });
 
   return null;
