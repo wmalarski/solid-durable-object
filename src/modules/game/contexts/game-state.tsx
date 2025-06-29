@@ -7,7 +7,7 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import type { Session, WsMessage } from "../server/game-durable-object";
+import type { WsMessage } from "../server/game-durable-object";
 import { createOnDirectionChange } from "../utils/use-current-direction";
 import { usePlayer } from "./game-config";
 import {
@@ -18,12 +18,12 @@ import {
 const createGameStateContext = () => {
   const wsSender = useWebsocketSender();
 
-  const [cursors, setCursors] = createStore<Record<string, Session>>({});
+  const [cursors, setCursors] = createStore<Record<string, ClientSession>>({});
 
   const getPlayer = usePlayer();
 
   useOnWebsocketEvent("open", () => {
-    wsSender({ type: "get-cursors" });
+    wsSender({ type: "get-state" });
   });
 
   useOnWebsocketEvent("close", () => {
@@ -54,8 +54,6 @@ const createGameStateContext = () => {
           produce((prev) => {
             if (!(messageData.id in prev)) {
               prev[messageData.id] = {
-                angle: 0,
-                direction: "NONE",
                 id: messageData.id,
                 x: -1,
                 y: -1,
@@ -82,7 +80,7 @@ const createGameStateContext = () => {
         );
         break;
       }
-      case "get-cursors-response":
+      case "get-state-response":
         setCursors(
           Object.fromEntries(
             messageData.sessions.map((session) => [session.id, session]),

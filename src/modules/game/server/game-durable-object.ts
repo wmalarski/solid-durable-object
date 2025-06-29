@@ -1,40 +1,54 @@
 import { DurableObject } from "cloudflare:workers";
 import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
-import type { PlayerDirection } from "../utils/types";
+import { GAME_INTERVAL } from "../utils/constants";
+import type {
+  PlayerDirection,
+  PlayerState,
+  PlayerUpdate,
+} from "../utils/types";
+import { getPlayerInitialState, getPlayerUpdate } from "./updates";
 
 export type WsMessage =
-  | { type: "quit"; id: string }
-  | { type: "join"; id: string }
-  | { type: "get-cursors" }
-  | { type: "get-cursors-response"; sessions: Session[] }
-  | { type: "change-direction"; id: string; direction: PlayerDirection };
-
-export type Session = {
-  id: string;
-  x: number;
-  y: number;
-  direction: PlayerDirection;
-  angle: number;
-};
+  | { type: "quit"; playerId: string }
+  | { type: "join"; playerId: string }
+  | { type: "get-state" }
+  | { type: "get-state-response"; players: PlayerState[] }
+  | { type: "get-state-update"; update: PlayerUpdate[] }
+  | { type: "change-direction"; playerId: string; direction: PlayerDirection };
 
 export class GameDurableObject extends DurableObject<Env> {
-  sessions: Map<WebSocket, Session>;
+  players: Map<WebSocket, PlayerState>;
 
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
 
-    this.sessions = new Map();
+    this.players = new Map();
     this.ctx.getWebSockets().forEach((ws) => {
       const meta = ws.deserializeAttachment();
-      this.sessions.set(ws, { ...meta });
+      this.players.set(ws, { ...meta });
     });
+
+    this.setupPing();
+  }
+
+  setupPing() {
+    setInterval(() => {
+      const update = getPlayerUpdate(this.players);
+      this.broadcast({ type: "get-state-update", update });
+    }, GAME_INTERVAL);
   }
 
   broadcast(message: WsMessage, self?: string) {
     this.ctx.getWebSockets().forEach((ws) => {
       const { id } = ws.deserializeAttachment();
-      if (id !== self) ws.send(JSON.stringify(message));
+      if (id !== self) {
+        this.send(message, ws);
+      }
     });
+  }
+
+  send(message: WsMessage, ws: WebSocket) {
+    ws.send(JSON.stringify(message));
   }
 
   fetch(request: Request) {
@@ -48,16 +62,10 @@ export class GameDurableObject extends DurableObject<Env> {
       return new Response("Missing id", { status: 400 });
     }
 
-    const sessionInitialData: Session = {
-      angle: 0,
-      direction: "NONE",
-      id: player.id,
-      x: -1,
-      y: -1,
-    };
-    server.serializeAttachment(sessionInitialData);
-    this.sessions.set(server, sessionInitialData);
-    this.broadcast({ id: player.id, type: "join" }, player.id);
+    const playerInitialData = getPlayerInitialState(player);
+    server.serializeAttachment(playerInitialData);
+    this.players.set(server, playerInitialData);
+    this.broadcast({ playerId: player.id, type: "join" }, player.id);
 
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -70,32 +78,22 @@ export class GameDurableObject extends DurableObject<Env> {
     if (typeof message !== "string") return;
 
     const parsedMsg: WsMessage = JSON.parse(message);
-    const session = this.sessions.get(ws);
+    const session = this.players.get(ws);
 
     if (!session) return;
 
     switch (parsedMsg.type) {
-      case "get-cursors": {
-        const sessions: Session[] = [];
-        this.sessions.forEach((session) => sessions.push(session));
-        const wsMessage: WsMessage = { sessions, type: "get-cursors-response" };
-        ws.send(JSON.stringify(wsMessage));
+      case "get-state": {
+        const players: PlayerState[] = [];
+        this.players.forEach((session) => players.push(session));
+        this.send({ players, type: "get-state-response" }, ws);
         break;
       }
 
       case "change-direction": {
-        // const untrackedDirection = direction();
-        // const { x, y } = getUpdatedPlayerPosition(state.player);
-        // const angle = getUpdatedPlayerAngle(state.player, untrackedDirection);
-
-        // state.player.position.x = x;
-        // state.player.position.y = y;
-        // state.player.angle = angle;
-
         session.direction = parsedMsg.direction;
         ws.serializeAttachment(session);
-
-        this.broadcast(parsedMsg, session.id);
+        this.broadcast(parsedMsg, session.playerId);
         break;
       }
 
@@ -105,9 +103,9 @@ export class GameDurableObject extends DurableObject<Env> {
   }
 
   webSocketClose(client: WebSocket) {
-    const id = this.sessions.get(client)?.id;
-    id && this.broadcast({ id, type: "quit" });
-    this.sessions.delete(client);
+    const playerId = this.players.get(client)?.playerId;
+    playerId && this.broadcast({ playerId, type: "quit" });
+    this.players.delete(client);
     client.close();
   }
 }

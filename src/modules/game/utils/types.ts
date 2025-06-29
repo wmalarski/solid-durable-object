@@ -1,22 +1,16 @@
-export type Point2D = {
-  x: number;
-  y: number;
-};
-
-export type PlayerLine = {
-  userId: string;
-  points: Point2D;
-};
-
-export type TeamArea = {
-  teamId: string;
-  points: Point2D[];
-  userLines: PlayerLine[];
-};
+import type { Point2D } from "~/utils/math";
 
 export type PlayerState = {
+  playerId: string;
   position: Point2D;
+  direction: PlayerDirection;
   angle: number;
+  points: Point2D[];
+};
+
+export type PlayerUpdate = {
+  playerId: string;
+  point: Point2D;
 };
 
 export type PlayerDirection = "LEFT" | "RIGHT" | "NONE";
