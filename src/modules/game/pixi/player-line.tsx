@@ -1,5 +1,5 @@
 import { Graphics } from "pixi.js";
-import { type Component, createEffect, onCleanup } from "solid-js";
+import { type Component, createEffect, createMemo, onCleanup } from "solid-js";
 import { useGameState } from "../contexts/game-state";
 import { usePixiContainer } from "./pixi-app";
 
@@ -19,13 +19,17 @@ export const PlayerLine: Component<PlayerLineProps> = (props) => {
     container.removeChild(graphics);
   });
 
-  createEffect(() => {
-    graphics.clear();
-    graphics.circle(0, 0, 5).fill({ alpha: 1, color: 0xffffff });
+  const color = createMemo(() => {
+    return game().store[props.playerId].color;
   });
 
   createEffect(() => {
-    const position = game().store[props.playerId];
+    graphics.clear();
+    graphics.circle(0, 0, 5).fill({ alpha: 1, color: color() });
+  });
+
+  createEffect(() => {
+    const position = game().store[props.playerId].position;
     graphics.x = position.x;
     graphics.y = position.y;
   });

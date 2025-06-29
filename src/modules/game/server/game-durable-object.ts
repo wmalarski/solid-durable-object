@@ -54,7 +54,7 @@ export class GameDurableObject extends DurableObject<Env> {
     const playerInitialData = getPlayerInitialState(player);
     server.serializeAttachment(playerInitialData);
     this.players.set(server, playerInitialData);
-    this.broadcast({ playerId: player.id, type: "join" }, player.id);
+    this.broadcast({ player: playerInitialData, type: "join" }, player.id);
 
     return new Response(null, { status: 101, webSocket: client });
   }

@@ -7,18 +7,19 @@ import {
   useContext,
 } from "solid-js";
 import { createStore, produce } from "solid-js/store";
-import type { WsServerMessage } from "../server/messages";
+import type { PlayerState } from "../utils/types";
 import { createOnDirectionChange } from "../utils/use-current-direction";
 import { usePlayer } from "./game-config";
 import {
   useOnWebsocketEvent,
+  useOnWebsocketMessage,
   useWebsocketSender,
 } from "./websocket-connection";
 
 const createGameStateContext = () => {
   const wsSender = useWebsocketSender();
 
-  const [cursors, setCursors] = createStore<Record<string, ClientSession>>({});
+  const [store, setStore] = createStore<Record<string, PlayerState>>({});
 
   const getPlayer = usePlayer();
 
@@ -27,7 +28,7 @@ const createGameStateContext = () => {
   });
 
   useOnWebsocketEvent("close", () => {
-    setCursors({});
+    setStore({});
   });
 
   createOnDirectionChange((direction) => {
@@ -41,35 +42,30 @@ const createGameStateContext = () => {
     }
   });
 
-  useOnWebsocketEvent("message", (message) => {
-    const messageData: WsServerMessage = JSON.parse(message.data);
-    switch (messageData.type) {
+  useOnWebsocketMessage((message) => {
+    switch (message.type) {
       case "quit":
-        setCursors(
+        setStore(
           produce((prev) => {
-            if (messageData.playerId in prev) {
-              delete prev[messageData.playerId];
+            if (message.playerId in prev) {
+              delete prev[message.playerId];
             }
           }),
         );
         break;
       case "join":
-        setCursors(
+        setStore(
           produce((prev) => {
-            if (!(messageData.playerId in prev)) {
-              prev[messageData.playerId] = {
-                id: messageData.playerId,
-                x: -1,
-                y: -1,
-              };
+            if (!(message.player.playerId in prev)) {
+              prev[message.player.playerId] = message.player;
             }
           }),
         );
         break;
       case "get-state-response":
-        setCursors(
+        setStore(
           Object.fromEntries(
-            messageData.players.map((session) => [session.playerId, session]),
+            message.players.map((session) => [session.playerId, session]),
           ),
         );
         break;
@@ -78,7 +74,7 @@ const createGameStateContext = () => {
     }
   });
 
-  return { store: cursors };
+  return { store };
 };
 
 const GameStateContext = createContext<

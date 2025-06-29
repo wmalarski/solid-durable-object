@@ -9,8 +9,8 @@ import {
   useContext,
 } from "solid-js";
 import {
-  getGameConfigQuery,
   type GetGameConfigResult,
+  getGameConfigQuery,
 } from "../server/services";
 
 const createGameConfig = (gameId: string, config?: GetGameConfigResult) => {

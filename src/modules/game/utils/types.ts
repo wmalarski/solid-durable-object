@@ -6,6 +6,8 @@ export type PlayerState = {
   direction: PlayerDirection;
   angle: number;
   points: Point2D[];
+  name: string;
+  color: string;
 };
 
 export type PlayerUpdate = {

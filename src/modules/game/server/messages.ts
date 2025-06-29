@@ -10,6 +10,6 @@ export type WsClientMessage =
 
 export type WsServerMessage =
   | { type: "quit"; playerId: string }
-  | { type: "join"; playerId: string }
+  | { type: "join"; player: PlayerState }
   | { type: "get-state-response"; players: PlayerState[] }
   | { type: "get-state-update"; update: PlayerUpdate[] };

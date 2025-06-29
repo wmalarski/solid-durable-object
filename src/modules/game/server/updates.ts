@@ -37,7 +37,9 @@ export const getPlayerUpdate = (sessions: Map<WebSocket, PlayerState>) => {
 export const getPlayerInitialState = (player: Player): PlayerState => {
   return {
     angle: Math.random() * Math.PI * 2,
+    color: player.color,
     direction: "NONE",
+    name: player.name,
     playerId: player.id,
     points: [],
     position: { x: -1, y: -1 },
