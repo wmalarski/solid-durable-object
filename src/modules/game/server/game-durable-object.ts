@@ -1,20 +1,9 @@
 import { DurableObject } from "cloudflare:workers";
 import { getPlayerCookieFromRequest } from "~/modules/player/server/cookies";
 import { GAME_INTERVAL } from "../utils/constants";
-import type {
-  PlayerDirection,
-  PlayerState,
-  PlayerUpdate,
-} from "../utils/types";
+import type { PlayerState } from "../utils/types";
+import type { WsClientMessage, WsServerMessage } from "./messages";
 import { getPlayerInitialState, getPlayerUpdate } from "./updates";
-
-export type WsMessage =
-  | { type: "quit"; playerId: string }
-  | { type: "join"; playerId: string }
-  | { type: "get-state" }
-  | { type: "get-state-response"; players: PlayerState[] }
-  | { type: "get-state-update"; update: PlayerUpdate[] }
-  | { type: "change-direction"; playerId: string; direction: PlayerDirection };
 
 export class GameDurableObject extends DurableObject<Env> {
   players: Map<WebSocket, PlayerState>;
@@ -38,7 +27,7 @@ export class GameDurableObject extends DurableObject<Env> {
     }, GAME_INTERVAL);
   }
 
-  broadcast(message: WsMessage, self?: string) {
+  broadcast(message: WsServerMessage, self?: string) {
     this.ctx.getWebSockets().forEach((ws) => {
       const { id } = ws.deserializeAttachment();
       if (id !== self) {
@@ -47,7 +36,7 @@ export class GameDurableObject extends DurableObject<Env> {
     });
   }
 
-  send(message: WsMessage, ws: WebSocket) {
+  send(message: WsServerMessage, ws: WebSocket) {
     ws.send(JSON.stringify(message));
   }
 
@@ -77,7 +66,7 @@ export class GameDurableObject extends DurableObject<Env> {
   async webSocketMessage(ws: WebSocket, message: string) {
     if (typeof message !== "string") return;
 
-    const parsedMsg: WsMessage = JSON.parse(message);
+    const parsedMsg: WsClientMessage = JSON.parse(message);
     const session = this.players.get(ws);
 
     if (!session) return;
@@ -93,7 +82,6 @@ export class GameDurableObject extends DurableObject<Env> {
       case "change-direction": {
         session.direction = parsedMsg.direction;
         ws.serializeAttachment(session);
-        this.broadcast(parsedMsg, session.playerId);
         break;
       }
 
