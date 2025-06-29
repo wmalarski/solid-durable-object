@@ -1,10 +1,11 @@
 import type { Player } from "~/modules/player/server/types";
-import { movePoint } from "~/utils/math";
 import { PLAYER_ANGLE_VELOCITY } from "../utils/constants";
+import { movePoint, randomAngle, randomFromRange } from "../utils/math";
 import type { PlayerState, PlayerUpdate } from "../utils/types";
 
-const getUpdatedPlayerPosition = ({ angle, position }: PlayerState) => {
-  return movePoint({ angle, point: position, velocity: PLAYER_ANGLE_VELOCITY });
+const getUpdatedPlayerPosition = ({ angle, points }: PlayerState) => {
+  const point = points[points.length - 1];
+  return movePoint({ angle, point, velocity: PLAYER_ANGLE_VELOCITY });
 };
 
 const getUpdatedPlayerAngle = ({ angle, direction }: PlayerState) => {
@@ -22,13 +23,12 @@ export const getPlayerUpdate = (sessions: Map<WebSocket, PlayerState>) => {
   const update: PlayerUpdate[] = [];
 
   sessions.forEach((session) => {
-    const newPosition = getUpdatedPlayerPosition(session);
+    const point = getUpdatedPlayerPosition(session);
     const angle = getUpdatedPlayerAngle(session);
-    update.push({ playerId: session.playerId, point: newPosition });
+    update.push({ playerId: session.playerId, point });
 
     session.angle = angle;
-    session.position = newPosition;
-    session.points.push(newPosition);
+    session.points.push(point);
   });
 
   return update;
@@ -36,12 +36,11 @@ export const getPlayerUpdate = (sessions: Map<WebSocket, PlayerState>) => {
 
 export const getPlayerInitialState = (player: Player): PlayerState => {
   return {
-    angle: Math.random() * Math.PI * 2,
+    angle: randomAngle(),
     color: player.color,
     direction: "NONE",
     name: player.name,
     playerId: player.id,
-    points: [],
-    position: { x: -1, y: -1 },
+    points: [{ x: randomFromRange(50, 200), y: randomFromRange(50, 200) }],
   };
 };

@@ -62,13 +62,24 @@ const createGameStateContext = () => {
           }),
         );
         break;
-      case "get-state-response":
+      case "get-state-response": {
         setStore(
           Object.fromEntries(
             message.players.map((session) => [session.playerId, session]),
           ),
         );
         break;
+      }
+      case "get-state-update": {
+        setStore(
+          produce((prev) => {
+            message.update.forEach((update) => {
+              prev[update.playerId].points.push(update.point);
+            });
+          }),
+        );
+        break;
+      }
       default:
         break;
     }

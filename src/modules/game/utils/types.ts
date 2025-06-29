@@ -1,8 +1,7 @@
-import type { Point2D } from "~/utils/math";
+import type { Point2D } from "~/modules/game/utils/math";
 
 export type PlayerState = {
   playerId: string;
-  position: Point2D;
   direction: PlayerDirection;
   angle: number;
   points: Point2D[];

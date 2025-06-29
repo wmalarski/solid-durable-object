@@ -29,7 +29,8 @@ export const PlayerLine: Component<PlayerLineProps> = (props) => {
   });
 
   createEffect(() => {
-    const position = game().store[props.playerId].position;
+    const points = game().store[props.playerId].points;
+    const position = points[points.length - 1];
     graphics.x = position.x;
     graphics.y = position.y;
   });

@@ -1,4 +1,5 @@
 import type { Component } from "solid-js";
+import { randomHexColor } from "~/modules/game/utils/colors";
 import { FieldError } from "~/ui/field-error/field-error";
 import {
   Fieldset,
@@ -7,7 +8,6 @@ import {
 } from "~/ui/fieldset/fieldset";
 import { FormError } from "~/ui/form-error/form-error";
 import { Input } from "~/ui/input/input";
-import { randomHexColor } from "~/utils/colors";
 import { type FormIssues, getInvalidStateProps } from "~/utils/forms";
 import { useI18n } from "~/utils/i18n";
 
